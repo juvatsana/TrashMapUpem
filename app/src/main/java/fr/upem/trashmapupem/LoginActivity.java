@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +19,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * A login screen that offers login via email/password.
@@ -45,9 +55,8 @@ public class LoginActivity extends AppCompatActivity{
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -70,12 +79,42 @@ public class LoginActivity extends AppCompatActivity{
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                /*
+                String u = "http://jvorabou.esy.es/login.php?username=julien&password=julien";
+                try {
+                    URL url = new URL(u.toString());
+                    HttpURLConnection connect = (HttpURLConnection)url .openConnection();
+                    connect.setRequestProperty("User-Agent", "Mozilla/5.0");
+                    int responseCode = connect.getResponseCode();
+                    Log.e("AHCODE", String.valueOf(responseCode));
+
+                } catch (Exception e) {
+                    Log.e("errorREAD","errorREAD");
+                }
+                */
+
                 attemptLogin();
             }
         });
 
 
 
+    }
+
+    private InputStream OpenHttpConnection(String strURL)
+            throws IOException {
+        URLConnection conn = null;
+        InputStream inputStream = null;
+        URL url = new URL(strURL);
+        conn = url.openConnection();
+        HttpURLConnection httpConn = (HttpURLConnection) conn;
+        httpConn.setRequestMethod("GET");
+        httpConn.connect();
+        if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            inputStream = httpConn.getInputStream();
+        }
+        return inputStream;
     }
 
     /**
@@ -199,6 +238,8 @@ public class LoginActivity extends AppCompatActivity{
             mAuthTask = null;
             //showProgress(false);
         }
+
+
     }
 }
 
