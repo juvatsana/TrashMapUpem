@@ -13,12 +13,4 @@
         <item name="@android:background">@color/colorBlanc</item>
         <item name="@android:textColor">@color/colorPink</item>
     </style>
-
-    <style name="AnDialogTheme" parent="@android:style/AlertDialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
 </resources>

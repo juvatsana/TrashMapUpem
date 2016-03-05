@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                AlertDialog alertDialog = new AlertDialog.Builder(this,R.style.AnDialogTheme)
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Ajout d'un marqueur").setNeutralButton("Close", null).show();
                 break;
             default:
