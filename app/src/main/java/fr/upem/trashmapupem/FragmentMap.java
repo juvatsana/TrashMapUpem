@@ -4,6 +4,7 @@ package fr.upem.trashmapupem;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -35,7 +37,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     */
     public static Fragment newInstance(Context context) {
         FragmentMap f = new FragmentMap();
-
         return f;
     }
 
@@ -43,17 +44,32 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_maps, container, false);
-
+        SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        myMAPF.getMapAsync(this);
+        //onMapReady(mMap);
         return root;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        Log.e("RDY","RDY");
+
         mMap = googleMap;
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //Position caméra
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(48.8392733, 2.5850778), 16));
+
+        //Position d'un marker poubelle
+        mMap.addMarker(new MarkerOptions()
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
+                .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+                .position(new LatLng(48.838790, 2.585753))
+                .title("UPEM MLV")
+                .snippet("Info: Premiere poubelle au monde")
+                .draggable(true)
+                .flat(true));
     }
 
 }
