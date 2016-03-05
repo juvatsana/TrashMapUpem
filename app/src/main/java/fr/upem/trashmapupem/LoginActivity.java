@@ -2,6 +2,8 @@ package fr.upem.trashmapupem;
 
 import android.content.Intent;
 
+import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -28,6 +30,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import android.app.ProgressDialog;
+import android.app.Activity;
 
 /**
  * A login screen that offers login via email/password.
@@ -189,10 +194,18 @@ public class LoginActivity extends AppCompatActivity{
 
         private final String mEmail;
         private final String mPassword;
+        private ProgressDialog prodDailog = new ProgressDialog(LoginActivity.this);
 
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
+            prodDailog.setMessage("Looking for you login ...");
+            prodDailog.setTitle("Please wait");
+            prodDailog.setIndeterminate(false);
+            prodDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            prodDailog.setCancelable(true);
+            prodDailog.setIndeterminateDrawable(ContextCompat.getDrawable(prodDailog.getContext(),R.drawable.dialogtheme));
+            prodDailog.show();
         }
 
         @Override
@@ -216,7 +229,7 @@ public class LoginActivity extends AppCompatActivity{
             }
 
             // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -231,6 +244,7 @@ public class LoginActivity extends AppCompatActivity{
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
+            prodDailog.hide();
         }
 
         @Override
