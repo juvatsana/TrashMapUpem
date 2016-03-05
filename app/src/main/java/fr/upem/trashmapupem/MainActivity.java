@@ -1,5 +1,6 @@
 package fr.upem.trashmapupem;
 
+import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 
@@ -79,6 +80,17 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+            case R.id.nav_add_trash:
+                Log.i("nonono", "in delete");
+                fragmentClass = FragmentMap.class;
+                try {
+                    fragment = (Fragment) FragmentMap.newInstance(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                AlertDialog alertDialog = new AlertDialog.Builder(this,R.style.AnDialogTheme)
+                .setTitle("Ajout d'un marqueur").setNeutralButton("Close", null).show();
                 break;
             default:
                 Log.i("nonono","on default");
