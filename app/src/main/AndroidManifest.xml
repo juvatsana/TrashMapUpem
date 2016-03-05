@@ -48,6 +48,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.upem.trashmapupem.LoginActivity" />
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="Main activity">
+
+        </activity>
     </application>
 
 </manifest>

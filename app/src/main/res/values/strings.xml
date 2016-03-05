@@ -14,4 +14,10 @@
         completions."
     </string>
     <string name="title_activity_maps">Trash map</string>
+    <string name="button_list">Liste</string>
+    <string name="button_map">Carte</string>
+    <string name="add_trash">Ajout</string>
+    <string name="remove_trash">Suppression</string>
+
+
 </resources>
