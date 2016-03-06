@@ -19,5 +19,9 @@
     <string name="add_trash">Ajout</string>
     <string name="remove_trash">Suppression</string>
 
+    <string name="name">Name</string>
+    <string name="comment">Comment</string>
+    <string name="ajout">Ajout</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

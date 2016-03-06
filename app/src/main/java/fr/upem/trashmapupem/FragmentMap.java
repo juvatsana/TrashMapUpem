@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -108,11 +109,44 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
                                     // Here to add content
-                                    
-                                    /*AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    builderNo.setMessage("Then good bye").show();
+                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                                    final View theview = inflater.inflate(R.layout.add_content_garbage, null);
+                                    builderNo.setView(theview)
+                                            // Add action buttons
+                                            .setPositiveButton(R.string.ajout, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    EditText ETuser = (EditText) theview.findViewById(R.id.theusername);
+                                                    EditText ETpass = (EditText) theview.findViewById(R.id.thepassword);
+                                                    if((ETuser.getText().toString().compareTo("")==0)||(ETpass.getText().toString().compareTo("")==0))
+                                                    {
+                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                                        builderYes.setMessage("Mark added but no description. Thanks you.").show();
+                                                        MarkerOptions themo = new MarkerOptions().position(point);
+                                                        mMap.addMarker(themo);
+                                                        addFragmentMapMarker(themo);
+                                                    }
+                                                    else
+                                                    {
+                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                                        builderYes.setMessage("Mark added. Thanks you.").show();
+                                                        MarkerOptions themo = new MarkerOptions().position(point);
+                                                        mMap.addMarker(themo);
+                                                        addFragmentMapMarker(themo);
+                                                    }
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    // need to cancel the dialog
+
+                                                    //LoginDialogFragment.this.getDialog().cancel();
+                                                }
+                                            });
+                                    builderNo.show();
                                     setOnListener(false);
-                                    mMap.setOnMapClickListener(null);*/
+                                    mMap.setOnMapClickListener(null);
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:

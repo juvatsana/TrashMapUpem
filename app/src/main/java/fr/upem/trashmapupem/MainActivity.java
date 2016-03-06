@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Click and press yes for add marker").show();
+                        .setMessage("Click and press yes for add marker").show();
                 break;
             default:
                 Log.i("nonono","on default");
