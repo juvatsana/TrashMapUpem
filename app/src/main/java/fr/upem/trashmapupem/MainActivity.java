@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
                             .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                             .position(new LatLng(48.838790, 2.585753));
-                    fragment.addMarker(test);
+                    fragment.addFragmentMapMarker(test);
                     fragment.setOnListener(true);
 
                     //FragmentMap oldFragment = (FragmentMap) getFragmentManager().findFragmentByTag(fragmentTagSave);

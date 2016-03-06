@@ -43,7 +43,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
 
 
-    public void addMarker(MarkerOptions newMarker)
+    public void addFragmentMapMarker(MarkerOptions newMarker)
     {
         if(newMarker != null)
         {
@@ -100,20 +100,45 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 @Override
                 public void onMapClick(LatLng arg0)
                 {
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    final LatLng point = arg0;
+
+                    final DialogInterface.OnClickListener dialogClickListenerTryAgain = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
                                     AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Oh baby, its all u gad?").setPositiveButton("Yes", null)
-                                            .setNegativeButton("No", null).show();
+                                    builderYes.setMessage("Go").show();
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    builderNo.setMessage("Oh wtf").setPositiveButton("Yes", null)
-                                            .setNegativeButton("No", null).show();
+                                    builderNo.setMessage("Then good bye").show();
+                                    setOnListener(false);
+                                    mMap.setOnMapClickListener(null);
+                                    break;
+                            }
+                        }
+                    };
+
+                    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                    builderYes.setMessage("Mark added. Thanks you.").show();
+                                    MarkerOptions themo = new MarkerOptions().position(point);
+                                    mMap.addMarker(themo);
+                                    addFragmentMapMarker(themo);
+                                    setOnListener(false);
+                                    mMap.setOnMapClickListener(null);
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    builderNo.setMessage("Try again ?").setPositiveButton("Yes", dialogClickListenerTryAgain)
+                                            .setNegativeButton("No", dialogClickListenerTryAgain).show();
                                     break;
                             }
                         }
