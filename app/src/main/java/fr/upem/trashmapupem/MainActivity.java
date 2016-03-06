@@ -97,19 +97,17 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     fragment = (FragmentMap) FragmentMap.newInstance(this);
 
-                    //Just for test
                     /*MarkerOptions test = new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
                             .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                             .position(new LatLng(48.838790, 2.585753));
                     fragment.addFragmentMapMarker(test);*/
                     fragment.setOnListenerAjout(true);
-
-                    //FragmentMap oldFragment = (FragmentMap) getFragmentManager().findFragmentByTag(fragmentTagSave);
-                    //GoogleMap map = ((SupportMapFragment)fragment.getFragmentManager().findFragmentById(R.id.map)).getMap();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                // Render a message
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .setMessage("Click and press yes for add marker").show();
                 break;
