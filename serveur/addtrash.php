@@ -1,0 +1,11 @@
+//ajouter une poubele
+
+<?php
+$con=mysqli_connect("mysql.hostinger.fr","u978485106_admin","trashadmin","u978485106_trash");
+
+$sql="INSERT INTO poubelle (longitude, latitude,commentaire,date_creation) VALUES ('?????','??????','???????','???????','????????')";
+if (mysqli_query($con,$sql))
+{
+   echo "Trash have been inserted successfully";
+}
+?>
