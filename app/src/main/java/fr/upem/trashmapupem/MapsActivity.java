@@ -79,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Position d'un marker poubelle
         mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.pb))
                 .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                 .position(new LatLng(48.838790, 2.585753)));
     }
