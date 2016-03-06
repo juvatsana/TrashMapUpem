@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -166,9 +168,19 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     //LoginDialogFragment.this.getDialog().cancel();
                                                 }
                                             });
+
+                                    //Create the spinner
+                                    Spinner spinner = (Spinner) theview.findViewById(R.id.thespinner);
+                                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                                            R.array.garbage_colors, android.R.layout.simple_spinner_item);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    spinner.setAdapter(adapter);
+
+                                    // Render the layout
                                     builderNo.show();
                                     setOnListenerAjout(false);
                                     mMap.setOnMapClickListener(null);
+
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:

@@ -24,4 +24,10 @@
     <string name="ajout">Ajout</string>
     <string name="cancel">Cancel</string>
 
+    <string-array name="garbage_colors">
+        <item>Brown</item>
+        <item>Yellow</item>
+        <item>Green</item>
+    </string-array>
+
 </resources>
