@@ -28,11 +28,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
 import android.app.ProgressDialog;
 import android.app.Activity;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -214,8 +221,31 @@ public class LoginActivity extends AppCompatActivity{
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                //Thread.sleep(2000);
+
+                String link = "http://jvorabou.esy.es/login.php?username=juliena&password=julien";
+
+                URL url = new URL(link);
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet();
+                request.setURI(new URI(link));
+                HttpResponse response = client.execute(request);
+                BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+                StringBuffer sb = new StringBuffer("");
+                String line = "";
+
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+                in.close();
+                Log.i("login resultat", sb.toString());
+                if (sb.toString().equals("Connexion user ok") ){
+                    return true;
+                }
+            }catch(Exception e){
+                Log.e("Exception","Exception: " + e.getMessage());
                 return false;
             }
 
