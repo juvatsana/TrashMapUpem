@@ -39,7 +39,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     }
     */
 
-    public static void addMarker(MarkerOptions newMarker)
+    public void addMarker(MarkerOptions newMarker)
     {
         if(newMarker != null)
         {

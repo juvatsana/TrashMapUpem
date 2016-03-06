@@ -104,13 +104,14 @@ public class MainActivity extends AppCompatActivity {
                             .position(new LatLng(48.838790, 2.585753));
                     fragment.addMarker(test);
 
+
                     //FragmentMap oldFragment = (FragmentMap) getFragmentManager().findFragmentByTag(fragmentTagSave);
                     //GoogleMap map = ((SupportMapFragment)fragment.getFragmentManager().findFragmentById(R.id.map)).getMap();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Ajout d'un marqueur").setNeutralButton("Close", null).show();
+                .setTitle("Click and press yes for add marker").setNeutralButton("Close", null).show();
                 break;
             default:
                 Log.i("nonono","on default");
