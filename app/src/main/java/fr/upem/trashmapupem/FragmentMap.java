@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +52,18 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     }
     */
+
+    public static List<LatLng> getPosOfMapMark()
+    {
+        List<LatLng> list = new ArrayList<>();
+        Iterator it = mapMark.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            MarkerOptions MO = (MarkerOptions)pair.getValue();
+            list.add(MO.getPosition());
+        }
+        return list;
+    }
 
     /**
      * Add a marker for future instance
@@ -125,6 +138,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(48.8392733, 2.5850778), 16));
 
+        addFragmentMapMarker(new MarkerOptions()
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
+                .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+                .position(new LatLng(48.838790, 2.585753))
+                .title("UPEM MLV")
+                .snippet("Info: Premiere poubelle au monde")
+                .draggable(true)
+                .flat(true),null);
+
+        /*
         //Position d'un marker poubelle
         mMap.addMarker(new MarkerOptions()
                 //.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
@@ -134,6 +157,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 .snippet("Info: Premiere poubelle au monde")
                 .draggable(true)
                 .flat(true));
+        */
 
         // Load application markers
         Iterator it = mapMark.entrySet().iterator();

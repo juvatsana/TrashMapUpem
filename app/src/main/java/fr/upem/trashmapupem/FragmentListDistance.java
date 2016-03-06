@@ -7,11 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Juan on 06/03/2016.
@@ -27,8 +32,24 @@ public class FragmentListDistance extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_listdistance, container, false);
+        ListView listview = (ListView) root.findViewById(R.id.listDistanceView);
+        final List<LatLng> thelist = FragmentMap.getPosOfMapMark();
+        List<String> listCoord = calculListPos(thelist);
+        final StableArrayAdapter adapter = new StableArrayAdapter(getContext(),android.R.layout.simple_list_item_1, listCoord);
+        listview.setAdapter(adapter);
 
         return root;
+    }
+
+    public List<String> calculListPos(List<LatLng> listlat)
+    {
+        List<String> listdouble = new ArrayList<>();
+        for(LatLng ll:listlat)
+        {
+            Double distance = CalculationByDistance(new LatLng(48.838790, 2.585753), ll);
+            listdouble.add(String.valueOf(distance)+" km");
+        }
+        return listdouble;
     }
 
     public double CalculationByDistance(LatLng StartP, LatLng EndP) {
@@ -54,5 +75,30 @@ public class FragmentListDistance extends Fragment {
                 + " Meter   " + meterInDec);
 
         return Radius * c;
+    }
+
+    private class StableArrayAdapter extends ArrayAdapter<String> {
+
+        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+
+        public StableArrayAdapter(Context context, int textViewResourceId,
+                                  List<String> objects) {
+            super(context, textViewResourceId, objects);
+            for (int i = 0; i < objects.size(); ++i) {
+                mIdMap.put(objects.get(i), i);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            String item = getItem(position);
+            return mIdMap.get(item);
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
     }
 }
