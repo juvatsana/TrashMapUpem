@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                             .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                             .position(new LatLng(48.838790, 2.585753));
                     fragment.addFragmentMapMarker(test);*/
-                    fragment.setOnListener(true);
+                    fragment.setOnListenerAjout(true);
 
                     //FragmentMap oldFragment = (FragmentMap) getFragmentManager().findFragmentByTag(fragmentTagSave);
                     //GoogleMap map = ((SupportMapFragment)fragment.getFragmentManager().findFragmentById(R.id.map)).getMap();

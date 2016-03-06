@@ -17,9 +17,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Mourougan on 05/03/2016.
@@ -27,8 +32,8 @@ import java.util.ArrayList;
 public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private static ArrayList<MarkerOptions> listMark = new ArrayList<>();
-    private boolean onListener=false;
+    private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
+    private boolean onListenerAjout=false;
 
     /*
     @Override
@@ -44,12 +49,18 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
 
 
-    public void addFragmentMapMarker(MarkerOptions newMarker)
+    public boolean addFragmentMapMarker(MarkerOptions newMarker)
     {
-        if(newMarker != null)
+        if(newMarker == null)  return false;
+
+        LatLng LI = newMarker.getPosition();
+        String newMarkKey=String.valueOf(LI.latitude)+":"+String.valueOf(LI.longitude);
+        if(!mapMark.containsKey(newMarkKey))
         {
-            listMark.add(newMarker);
+            mapMark.put(newMarkKey,newMarker);
+            return true;
         }
+        return false;
     }
 
     public static Fragment newInstance(Context context) {
@@ -88,13 +99,24 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 .draggable(true)
                 .flat(true));
 
+        // Load application markers
+
+        Iterator it = mapMark.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            mMap.addMarker((MarkerOptions)pair.getValue());
+        }
+
+        /*
         for (MarkerOptions ma : listMark) {
             if (ma != null) {
                 mMap.addMarker(ma);
             }
         }
+        */
 
-        if(isOnListener())
+        // Check if AJOUT Fragment
+        if(isOnListenerAjout())
         {
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
             {
@@ -145,7 +167,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                 }
                                             });
                                     builderNo.show();
-                                    setOnListener(false);
+                                    setOnListenerAjout(false);
                                     mMap.setOnMapClickListener(null);
                                     break;
 
@@ -155,7 +177,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     MarkerOptions themo = new MarkerOptions().position(point);
                                     mMap.addMarker(themo);
                                     addFragmentMapMarker(themo);
-                                    setOnListener(false);
+                                    setOnListenerAjout(false);
                                     mMap.setOnMapClickListener(null);
                                     break;
                             }
@@ -174,7 +196,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
                                     builderNo.setMessage("Then good bye").show();
-                                    setOnListener(false);
+                                    setOnListenerAjout(false);
                                     mMap.setOnMapClickListener(null);
                                     break;
                             }
@@ -209,12 +231,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public boolean isOnListener() {
-        return onListener;
+    public boolean isOnListenerAjout() {
+        return onListenerAjout;
     }
 
-    public void setOnListener(boolean onListener) {
-        this.onListener = onListener;
+    public void setOnListenerAjout(boolean onListenerAjout) {
+        this.onListenerAjout = onListenerAjout;
     }
 }
 
