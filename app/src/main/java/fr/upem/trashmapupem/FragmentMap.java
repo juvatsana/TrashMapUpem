@@ -243,7 +243,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     // init marker
                                                     MarkerOptions themo = new MarkerOptions().position(point);
 
-                                                    if((ETname.getText().toString().compareTo("")==0)||(ETcomment.getText().toString().compareTo("")==0))
+                                                    if((ETname.getText().toString().compareTo("")==0)&&(ETcomment.getText().toString().compareTo("")==0))
                                                     {
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",

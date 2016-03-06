@@ -75,18 +75,23 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on
         // position
-        FragmentMap fragment = null;
+        Fragment fragment = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.nav_list:
                 Log.i("nonono","in list");
                 fragmentClass = FragmentMap.class;
+                try {
+                    fragment = FragmentMap.newInstance(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.nav_map:
                 Log.i("nonono","in map");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = (FragmentMap) FragmentMap.newInstance(this);
+                    fragment = FragmentMap.newInstance(this);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -95,8 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in delete");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = (FragmentMap) FragmentMap.newInstance(this);
-                    fragment.setOnListenerDelete(true);
+                    fragment = FragmentMap.newInstance(this);
+                    FragmentMap fm = (FragmentMap) fragment;
+                    fm.setOnListenerDelete(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -108,14 +114,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono", "in add");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = (FragmentMap) FragmentMap.newInstance(this);
-
+                    fragment = FragmentMap.newInstance(this);
+                    FragmentMap fm = (FragmentMap) fragment;
+                    fm.setOnListenerAjout(true);
                     /*MarkerOptions test = new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
                             .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                             .position(new LatLng(48.838790, 2.585753));
                     fragment.addFragmentMapMarker(test);*/
-                    fragment.setOnListenerAjout(true);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
