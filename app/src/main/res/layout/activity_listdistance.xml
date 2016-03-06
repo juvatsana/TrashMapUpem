@@ -17,4 +17,8 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:background="?attr/colorPrimaryDark">
     </android.support.v7.widget.Toolbar>
+    <ListView
+        android:id="@+id/listDistanceView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
