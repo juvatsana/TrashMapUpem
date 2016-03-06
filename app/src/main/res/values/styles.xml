@@ -10,6 +10,6 @@
 
     <style name="SecondDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
         <item name="@android:background">@color/colorBlanc</item>
-        <item name="@android:textColor">@color/colorPink</item>
+        <item name="@android:textColor">@color/colorAccent</item>
     </style>
 </resources>
