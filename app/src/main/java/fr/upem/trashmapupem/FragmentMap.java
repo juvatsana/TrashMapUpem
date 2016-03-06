@@ -37,8 +37,29 @@ import java.util.Map;
  */
 public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
+    public class PoubelleMarker {
+        String type;
+        MarkerOptions marker;
+
+        PoubelleMarker(String type, MarkerOptions marker) {
+            this.type = type;
+            this.marker = marker;
+        }
+
+        public String getType()
+        {
+            return type;
+        }
+
+        public MarkerOptions getMarkerOptions()
+        {
+            return marker;
+        }
+    }
+
     private GoogleMap mMap;
-    private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
+    //private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
+    private static HashMap<String,PoubelleMarker> mapMark = new HashMap<String,PoubelleMarker>();
     private boolean onListenerAjout=false;
     private boolean onListenerDelete=false;
     private boolean onListenerMain=true;
@@ -61,7 +82,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         Iterator it = mapMark.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            MarkerOptions MO = (MarkerOptions)pair.getValue();
+            PoubelleMarker PM = (PoubelleMarker)pair.getValue();
+            MarkerOptions MO = PM.getMarkerOptions();
             list.add(MO.getPosition());
         }
         return list;
@@ -107,7 +129,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         String newMarkKey=String.valueOf(LI.latitude)+":"+String.valueOf(LI.longitude);
         if(!mapMark.containsKey(newMarkKey))
         {
-            mapMark.put(newMarkKey,newMarker);
+            if(color==null)
+            {
+                mapMark.put(newMarkKey,new PoubelleMarker("Brown", newMarker));
+            }
+            else
+            {
+                mapMark.put(newMarkKey,new PoubelleMarker(color, newMarker));
+            }
             return newMarker;
         }
         return null;
@@ -147,7 +176,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 .title("UPEM MLV")
                 .snippet("Info: Premiere poubelle au monde")
                 .draggable(true)
-                .flat(true),null);
+                .flat(true),"Brown");
 
         /*
         //Position d'un marker poubelle
@@ -165,7 +194,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         Iterator it = mapMark.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            mMap.addMarker((MarkerOptions)pair.getValue());
+            PoubelleMarker PM = (PoubelleMarker)pair.getValue();
+            mMap.addMarker(PM.getMarkerOptions());
         }
 
         /*
