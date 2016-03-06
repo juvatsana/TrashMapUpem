@@ -151,16 +151,23 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
                                     LayoutInflater inflater = getActivity().getLayoutInflater();
                                     final View theview = inflater.inflate(R.layout.add_content_garbage, null);
+
                                     builderNo.setView(theview)
                                             // Add action buttons
                                             .setPositiveButton(R.string.ajout, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    EditText ETuser = (EditText) theview.findViewById(R.id.theusername);
-                                                    EditText ETpass = (EditText) theview.findViewById(R.id.thepassword);
+
+                                                    // Recup items of layout
+                                                    EditText ETname = (EditText) theview.findViewById(R.id.thename);
+                                                    EditText ETcomment = (EditText) theview.findViewById(R.id.thecomment);
                                                     Spinner SPspinner = (Spinner) theview.findViewById(R.id.thespinner);
                                                     String textSpinner = SPspinner.getSelectedItem().toString();
-                                                    if((ETuser.getText().toString().compareTo("")==0)||(ETpass.getText().toString().compareTo("")==0))
+
+                                                    // init marker
+                                                    MarkerOptions themo = new MarkerOptions().position(point);
+
+                                                    if((ETname.getText().toString().compareTo("")==0)||(ETcomment.getText().toString().compareTo("")==0))
                                                     {
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
@@ -172,6 +179,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     }
                                                     else
                                                     {
+                                                        if(ETname.getText().toString().compareTo("")!=0)
+                                                        {
+                                                            themo.title(ETname.getText().toString());
+                                                        }
+                                                        if(ETcomment.getText().toString().compareTo("")!=0)
+                                                        {
+                                                            themo.snippet(ETcomment.getText().toString());
+                                                        }
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added. Thanks you.",
                                                                 Toast.LENGTH_LONG).show();
@@ -180,9 +195,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         builderYes.setMessage("Mark added. Thanks you.").show();
                                                         */
                                                     }
-                                                    // Add marker
-                                                    MarkerOptions themo = new MarkerOptions().position(point);
-
                                                     // Recup marker with good garbage color
                                                     MarkerOptions tempMarker = addFragmentMapMarker(themo,textSpinner);
                                                     if(tempMarker!=null)

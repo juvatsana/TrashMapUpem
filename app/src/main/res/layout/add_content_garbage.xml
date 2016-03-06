@@ -11,8 +11,8 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"/>
     <EditText
-        android:id="@+id/theusername"
-        android:inputType="textEmailAddress"
+        android:id="@+id/thename"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -21,15 +21,14 @@
         android:layout_marginBottom="4dp"
         android:hint="@string/name" />
     <EditText
-        android:id="@+id/thepassword"
-        android:inputType="textPassword"
+        android:id="@+id/thecomment"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"
         android:hint="@string/comment"/>
     <Spinner
         android:layout_width="match_parent"
