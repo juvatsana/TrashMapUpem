@@ -74,6 +74,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     public MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,String color)
     {
+        if(newMarker == null)  return null;
+
         if(color!=null )
         {
             if(color.compareTo("Red")==0||color.compareTo("Brown")==0||color.compareTo("Yellow")==0)
@@ -81,7 +83,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
             }
         }
-        if(newMarker == null)  return null;
+        else
+        {
+            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
+        }
 
         LatLng LI = newMarker.getPosition();
         String newMarkKey=String.valueOf(LI.latitude)+":"+String.valueOf(LI.longitude);
@@ -316,8 +321,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     builderYes.setMessage("Mark added. Thanks you.").show();
                                     */
 
-                                    // Add marker
-                                    MarkerOptions themo = new MarkerOptions().position(point);
+                                    // Add marker by default
+                                    MarkerOptions themo = new MarkerOptions().position(point).icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
                                     mMap.addMarker(themo);
                                     addFragmentMapMarker(themo,null);
 

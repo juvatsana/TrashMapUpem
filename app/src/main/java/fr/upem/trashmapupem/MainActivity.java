@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in list");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = FragmentMap.newInstance(this);
+                    fragment = FragmentListDistance.newInstance(this);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
