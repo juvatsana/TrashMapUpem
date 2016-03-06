@@ -17,12 +17,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 /**
  * Created by Mourougan on 05/03/2016.
  */
 public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private static ArrayList<MarkerOptions> listMark = new ArrayList<>();
 
     /*
     @Override
@@ -35,6 +38,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     }
     */
+
+    public static void addMarker(MarkerOptions newMarker)
+    {
+        if(newMarker != null)
+        {
+            listMark.add(newMarker);
+        }
+    }
+
     public static Fragment newInstance(Context context) {
         FragmentMap f = new FragmentMap();
         return f;
@@ -53,7 +65,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        Log.e("RDY","RDY");
+        Log.e("RDY", "RDY");
 
         mMap = googleMap;
 
@@ -70,7 +82,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 .snippet("Info: Premiere poubelle au monde")
                 .draggable(true)
                 .flat(true));
-    }
 
+        for (MarkerOptions ma : listMark) {
+            if (ma != null) {
+                mMap.addMarker(ma);
+            }
+        }
+    }
 }
 

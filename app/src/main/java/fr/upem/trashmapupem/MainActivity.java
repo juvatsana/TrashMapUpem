@@ -13,6 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -33,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Assure that the transaction is made.
+        getSupportFragmentManager().executePendingTransactions();
 
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -65,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on
         // position
-        Fragment fragment = null;
+        FragmentMap fragment = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.nav_list:
@@ -76,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in map");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = (Fragment) FragmentMap.newInstance(this);
+                    fragment = (FragmentMap) FragmentMap.newInstance(this);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -85,7 +95,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono", "in delete");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = (Fragment) FragmentMap.newInstance(this);
+                    fragment = (FragmentMap) FragmentMap.newInstance(this);
+
+                    //Just for test
+                    MarkerOptions test = new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
+                            .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+                            .position(new LatLng(48.838790, 2.585753));
+                    fragment.addMarker(test);
+
+                    //FragmentMap oldFragment = (FragmentMap) getFragmentManager().findFragmentByTag(fragmentTagSave);
+                    //GoogleMap map = ((SupportMapFragment)fragment.getFragmentManager().findFragmentById(R.id.map)).getMap();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -102,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
+        // Assure that the transaction is made.
+        getSupportFragmentManager().executePendingTransactions();
 
         // Highlight the selected item, update the title, and close the drawer
         // Highlight the selected item has been done by NavigationView
