@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +41,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
     private boolean onListenerAjout=false;
     private boolean onListenerDelete=false;
+    private boolean onListenerMain=true;
 
     /*
     @Override
@@ -174,6 +176,189 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         }
         */
 
+        if(isOnListenerMain())
+        {
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                // Use default InfoWindow frame
+                @Override
+                public View getInfoWindow(Marker arg0) {
+                    return null;
+                }
+
+                // Defines the contents of the InfoWindow
+                @Override
+                public View getInfoContents(Marker arg0) {
+
+                    // Getting view from the layout file info_window_layout
+                    View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
+
+                    // Getting the position from the marker
+                    LatLng latLng = arg0.getPosition();
+
+                    // Getting reference to the TextView to set latitude
+                    TextView tvLat = (TextView) v.findViewById(R.id.tv_lat);
+
+                    // Getting reference to the TextView to set longitude
+                    TextView tvLng = (TextView) v.findViewById(R.id.tv_lng);
+
+                    // Setting the latitude
+                    tvLat.setText("Latitude:" + latLng.latitude);
+
+                    // Setting the longitude
+                    tvLng.setText("Longitude:"+ latLng.longitude);
+
+                    // Returning the view containing InfoWindow contents
+                    return v;
+
+                }
+            });
+
+            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+                @Override
+                public void onMapLongClick(LatLng arg0) {
+                    final LatLng point = arg0;
+
+                    // listener for "Add some contents?"
+                    final DialogInterface.OnClickListener dialogClickListenerAddSomeComment = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    // This case to add contents
+
+                                    // Render layout add_content_garbage
+                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                                    final View theview = inflater.inflate(R.layout.add_content_garbage, null);
+
+                                    builderNo.setView(theview)
+                                            // Add action buttons
+                                            .setPositiveButton(R.string.ajout, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int id) {
+
+                                                    // Recup items of layout
+                                                    EditText ETname = (EditText) theview.findViewById(R.id.thename);
+                                                    EditText ETcomment = (EditText) theview.findViewById(R.id.thecomment);
+                                                    Spinner SPspinner = (Spinner) theview.findViewById(R.id.thespinner);
+                                                    String textSpinner = SPspinner.getSelectedItem().toString();
+
+                                                    // init marker
+                                                    MarkerOptions themo = new MarkerOptions().position(point);
+
+                                                    if ((ETname.getText().toString().compareTo("") == 0) && (ETcomment.getText().toString().compareTo("") == 0)) {
+                                                        // Render a message/toast
+                                                        Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
+                                                                Toast.LENGTH_LONG).show();
+                                                        /*
+                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                                        builderYes.setMessage("Mark added but no description. Thanks you.").show();
+                                                        */
+                                                    } else {
+                                                        if (ETname.getText().toString().compareTo("") != 0) {
+                                                            themo.title(ETname.getText().toString());
+                                                        }
+                                                        if (ETcomment.getText().toString().compareTo("") != 0) {
+                                                            themo.snippet(ETcomment.getText().toString());
+                                                        }
+                                                        // Render a message/toast
+                                                        Toast.makeText(getActivity(), "Mark added. Thanks you.",
+                                                                Toast.LENGTH_LONG).show();
+                                                        /*
+                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                                        builderYes.setMessage("Mark added. Thanks you.").show();
+                                                        */
+                                                    }
+                                                    // Recup marker with good garbage color
+                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, textSpinner);
+                                                    if (tempMarker != null) {
+                                                        mMap.addMarker(tempMarker);
+                                                    } else // !!! Maybe we have to manage null Marker !!!
+                                                    {
+                                                        mMap.addMarker(themo);
+                                                    }
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    // need to cancel the dialog
+
+                                                    //LoginDialogFragment.this.getDialog().cancel();
+                                                }
+                                            });
+
+                                    //Create and load the spinner
+                                    Spinner spinner = (Spinner) theview.findViewById(R.id.thespinner);
+                                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                                            R.array.garbage_colors, android.R.layout.simple_spinner_item);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    spinner.setAdapter(adapter);
+
+                                    // Render the layout
+                                    builderNo.show();
+
+                                    // Quit ajout
+                                    setOnListenerAjout(false);
+                                    mMap.setOnMapClickListener(null);
+
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // Render a message/toast
+                                    Toast.makeText(getActivity(), "Mark added. Thanks you.",
+                                            Toast.LENGTH_LONG).show();
+                                    /*
+                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                    builderYes.setMessage("Mark added. Thanks you.").show();
+                                    */
+
+                                    // Add marker by default
+                                    MarkerOptions themo = new MarkerOptions().position(point).icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
+                                    mMap.addMarker(themo);
+                                    addFragmentMapMarker(themo, null);
+
+                                    // Quit Ajout
+                                    setOnListenerAjout(false);
+                                    mMap.setOnMapClickListener(null);
+                                    break;
+                            }
+                        }
+                    };
+
+                    // listener for "Are You sure"
+                    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    // Render a message
+                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                    builderYes.setMessage("Do you want to add some comments ?").setPositiveButton("Yes", dialogClickListenerAddSomeComment)
+                                            .setNegativeButton("No", dialogClickListenerAddSomeComment).show();
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // Render a toast
+                                    Toast.makeText(getActivity(), "Try Again",
+                                            Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+                    };
+
+                    android.util.Log.i("onMapClick", "MapClickAdd baby!");
+
+                    // Render a message
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+
+                }
+            });
+        }
+
         // Check if DELETE Fragment
         if(isOnListenerDelete())
         {
@@ -237,18 +422,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         // Check if AJOUT Fragment
         if(isOnListenerAjout())
         {
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
-            {
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
-                public void onMapClick(LatLng arg0)
-                {
+                public void onMapClick(LatLng arg0) {
                     final LatLng point = arg0;
 
                     // listener for "Add some contents?"
                     final DialogInterface.OnClickListener dialogClickListenerAddSomeComment = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
+                            switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     // This case to add contents
 
@@ -272,8 +455,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     // init marker
                                                     MarkerOptions themo = new MarkerOptions().position(point);
 
-                                                    if((ETname.getText().toString().compareTo("")==0)&&(ETcomment.getText().toString().compareTo("")==0))
-                                                    {
+                                                    if ((ETname.getText().toString().compareTo("") == 0) && (ETcomment.getText().toString().compareTo("") == 0)) {
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
                                                                 Toast.LENGTH_LONG).show();
@@ -281,15 +463,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
                                                         builderYes.setMessage("Mark added but no description. Thanks you.").show();
                                                         */
-                                                    }
-                                                    else
-                                                    {
-                                                        if(ETname.getText().toString().compareTo("")!=0)
-                                                        {
+                                                    } else {
+                                                        if (ETname.getText().toString().compareTo("") != 0) {
                                                             themo.title(ETname.getText().toString());
                                                         }
-                                                        if(ETcomment.getText().toString().compareTo("")!=0)
-                                                        {
+                                                        if (ETcomment.getText().toString().compareTo("") != 0) {
                                                             themo.snippet(ETcomment.getText().toString());
                                                         }
                                                         // Render a message/toast
@@ -301,12 +479,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         */
                                                     }
                                                     // Recup marker with good garbage color
-                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo,textSpinner);
-                                                    if(tempMarker!=null)
-                                                    {
+                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, textSpinner);
+                                                    if (tempMarker != null) {
                                                         mMap.addMarker(tempMarker);
-                                                    }
-                                                    else // !!! Maybe we have to manage null Marker !!!
+                                                    } else // !!! Maybe we have to manage null Marker !!!
                                                     {
                                                         mMap.addMarker(themo);
                                                     }
@@ -348,7 +524,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     // Add marker by default
                                     MarkerOptions themo = new MarkerOptions().position(point).icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
                                     mMap.addMarker(themo);
-                                    addFragmentMapMarker(themo,null);
+                                    addFragmentMapMarker(themo, null);
 
                                     // Quit Ajout
                                     setOnListenerAjout(false);
@@ -362,7 +538,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                     final DialogInterface.OnClickListener dialogClickListenerTryAgain = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
+                            switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     // Render a message/toast
                                     Toast.makeText(getActivity(), "GO",
@@ -394,7 +570,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
+                            switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     // Render a message
                                     AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
@@ -437,6 +613,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     public void setOnListenerDelete(boolean onListenerDelete) {
         this.onListenerDelete = onListenerDelete;
+    }
+
+    public boolean isOnListenerMain() {
+        return onListenerMain;
+    }
+
+    public void setOnListenerMain(boolean onListenerMain) {
+        this.onListenerMain = onListenerMain;
     }
 }
 

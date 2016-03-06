@@ -92,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = FragmentMap.class;
                 try {
                     fragment = FragmentMap.newInstance(this);
+                    FragmentMap fm = (FragmentMap) fragment;
+                    fm.setOnListenerDelete(false);
+                    fm.setOnListenerAjout(false);
+                    fm.setOnListenerMain(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -103,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
                     fragment = FragmentMap.newInstance(this);
                     FragmentMap fm = (FragmentMap) fragment;
                     fm.setOnListenerDelete(true);
+                    fm.setOnListenerAjout(false);
+                    fm.setOnListenerMain(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -116,7 +122,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     fragment = FragmentMap.newInstance(this);
                     FragmentMap fm = (FragmentMap) fragment;
+                    fm.setOnListenerDelete(false);
                     fm.setOnListenerAjout(true);
+                    fm.setOnListenerMain(false);
                     /*MarkerOptions test = new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
                             .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
