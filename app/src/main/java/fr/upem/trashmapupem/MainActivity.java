@@ -98,11 +98,11 @@ public class MainActivity extends AppCompatActivity {
                     fragment = (FragmentMap) FragmentMap.newInstance(this);
 
                     //Just for test
-                    MarkerOptions test = new MarkerOptions()
+                    /*MarkerOptions test = new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
                             .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                             .position(new LatLng(48.838790, 2.585753));
-                    fragment.addFragmentMapMarker(test);
+                    fragment.addFragmentMapMarker(test);*/
                     fragment.setOnListener(true);
 
                     //FragmentMap oldFragment = (FragmentMap) getFragmentManager().findFragmentByTag(fragmentTagSave);
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Click and press yes for add marker").setNeutralButton("Close", null).show();
+                .setTitle("Click and press yes for add marker").show();
                 break;
             default:
                 Log.i("nonono","on default");

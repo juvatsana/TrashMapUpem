@@ -102,6 +102,32 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 {
                     final LatLng point = arg0;
 
+                    final DialogInterface.OnClickListener dialogClickListenerAddSomeComment = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    // Here to add content
+                                    
+                                    /*AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    builderNo.setMessage("Then good bye").show();
+                                    setOnListener(false);
+                                    mMap.setOnMapClickListener(null);*/
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                    builderYes.setMessage("Mark added. Thanks you.").show();
+                                    MarkerOptions themo = new MarkerOptions().position(point);
+                                    mMap.addMarker(themo);
+                                    addFragmentMapMarker(themo);
+                                    setOnListener(false);
+                                    mMap.setOnMapClickListener(null);
+                                    break;
+                            }
+                        }
+                    };
+
                     final DialogInterface.OnClickListener dialogClickListenerTryAgain = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -127,12 +153,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
                                     AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Mark added. Thanks you.").show();
-                                    MarkerOptions themo = new MarkerOptions().position(point);
-                                    mMap.addMarker(themo);
-                                    addFragmentMapMarker(themo);
-                                    setOnListener(false);
-                                    mMap.setOnMapClickListener(null);
+                                    builderYes.setMessage("Do you want to add some comments ?").setPositiveButton("Yes", dialogClickListenerAddSomeComment)
+                                            .setNegativeButton("No", dialogClickListenerAddSomeComment).show();
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
