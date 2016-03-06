@@ -2,8 +2,10 @@ package fr.upem.trashmapupem;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -26,6 +27,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private static ArrayList<MarkerOptions> listMark = new ArrayList<>();
+    private boolean onListener=false;
 
     /*
     @Override
@@ -38,6 +40,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     }
     */
+
+
 
     public void addMarker(MarkerOptions newMarker)
     {
@@ -88,6 +92,48 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 mMap.addMarker(ma);
             }
         }
+
+        if(isOnListener())
+        {
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
+            {
+                @Override
+                public void onMapClick(LatLng arg0)
+                {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                    builderYes.setMessage("Oh baby, its all u gad?").setPositiveButton("Yes", null)
+                                            .setNegativeButton("No", null).show();
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    builderNo.setMessage("Oh wtf").setPositiveButton("Yes", null)
+                                            .setNegativeButton("No", null).show();
+                                    break;
+                            }
+                        }
+                    };
+
+                    android.util.Log.i("onMapClick", "MapClickAdd baby!");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                }
+            });
+        }
+    }
+
+    public boolean isOnListener() {
+        return onListener;
+    }
+
+    public void setOnListener(boolean onListener) {
+        this.onListener = onListener;
     }
 }
 
