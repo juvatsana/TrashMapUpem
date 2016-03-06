@@ -91,8 +91,21 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 break;
+            case R.id.nav_remove_trash:
+                Log.i("nonono","in delete");
+                fragmentClass = FragmentMap.class;
+                try {
+                    fragment = (FragmentMap) FragmentMap.newInstance(this);
+                    fragment.setOnListenerDelete(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // Render a message
+                new AlertDialog.Builder(this)
+                        .setMessage("Click and press yes for delete marker").show();
+                break;
             case R.id.nav_add_trash:
-                Log.i("nonono", "in delete");
+                Log.i("nonono", "in add");
                 fragmentClass = FragmentMap.class;
                 try {
                     fragment = (FragmentMap) FragmentMap.newInstance(this);
@@ -108,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Render a message
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this)
                         .setMessage("Click and press yes for add marker").show();
                 break;
             default:

@@ -38,6 +38,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
     private boolean onListenerAjout=false;
+    private boolean onListenerDelete=false;
 
     /*
     @Override
@@ -56,6 +57,21 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
      * @param newMarker
      * @return sucess or not
      */
+    public Marker removeFragmentMapMarker(Marker newMarker)
+    {
+        if(newMarker==null)return null;
+
+        LatLng LL = newMarker.getPosition();
+        String newMarkKey=String.valueOf(LL.latitude)+":"+String.valueOf(LL.longitude);
+
+        if(mapMark.containsKey(newMarkKey))
+        {
+            mapMark.remove(newMarkKey);
+            return newMarker;
+        }
+        return null;
+    }
+
     public MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,String color)
     {
         if(color!=null )
@@ -128,6 +144,66 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             }
         }
         */
+
+        // Check if DELETE Fragment
+        if(isOnListenerDelete())
+        {
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+
+
+                @Override
+                public boolean onMarkerClick(Marker arg0) {
+
+                    final Marker markerToDelete = arg0;
+
+                    // listener for "Do you want to delete this mark?"
+                    final DialogInterface.OnClickListener dialogClickListenerDeleteMark = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+
+                                    // Delete marker
+                                    Marker newMarkerToDelete = removeFragmentMapMarker(markerToDelete);
+                                    markerToDelete.remove();
+
+                                    // Render a message/toast
+                                    Toast.makeText(getActivity(), "Marker Delete.",
+                                            Toast.LENGTH_LONG).show();
+                                    /*
+                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                    builderYes.setMessage("Marker delete").show();
+                                    */
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // Render a message
+                                    Toast.makeText(getActivity(), "Delete canceled...",
+                                            Toast.LENGTH_LONG).show();
+                                    /*
+                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    builderNo.setMessage("Delete canceled...").show();
+                                    */
+                                    break;
+                            }
+                        }
+                    };
+
+                    // Starte die Navigation mit Google Maps, sobald der Marker gedrckt wird
+
+                    // Render a message
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Do you really want to delete this mark ?").setPositiveButton("Yes", dialogClickListenerDeleteMark)
+                            .setNegativeButton("No", dialogClickListenerDeleteMark).show();
+
+                    // Quit ajout
+                    setOnListenerDelete(false);
+                    mMap.setOnMarkerClickListener(null);
+                    return true;
+                }
+            });
+        }
 
         // Check if AJOUT Fragment
         if(isOnListenerAjout())
@@ -224,6 +300,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
                                     // Render the layout
                                     builderNo.show();
+
+                                    // Quit ajout
                                     setOnListenerAjout(false);
                                     mMap.setOnMapClickListener(null);
 
@@ -257,9 +335,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    // Render a message
+                                    // Render a message/toast
+                                    Toast.makeText(getActivity(), "GO",
+                                            Toast.LENGTH_LONG).show();
+                                    /*
                                     AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
                                     builderYes.setMessage("Go").show();
+                                    */
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
@@ -318,6 +400,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     public void setOnListenerAjout(boolean onListenerAjout) {
         this.onListenerAjout = onListenerAjout;
+    }
+
+    public boolean isOnListenerDelete() {
+        return onListenerDelete;
+    }
+
+    public void setOnListenerDelete(boolean onListenerDelete) {
+        this.onListenerDelete = onListenerDelete;
     }
 }
 
