@@ -21,13 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -183,7 +181,8 @@ public class LoginActivity extends AppCompatActivity{
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return true;
+        //return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -223,7 +222,7 @@ public class LoginActivity extends AppCompatActivity{
                 // Simulate network access.
                 //Thread.sleep(2000);
 
-                String link = "http://jvorabou.esy.es/login.php?username=juliena&password=julien";
+                String link = "http://jvorabou.esy.es/login.php?username="+mEmail+"&password="+mPassword;
 
                 URL url = new URL(link);
                 HttpClient client = new DefaultHttpClient();
@@ -243,23 +242,26 @@ public class LoginActivity extends AppCompatActivity{
                 Log.i("login resultat", sb.toString());
                 if (sb.toString().equals("Connexion user ok") ){
                     return true;
+                } else {
+                    return false;
                 }
-            }catch(Exception e){
-                Log.e("Exception","Exception: " + e.getMessage());
+            }catch(Exception e) {
+                Log.e("Exception", "Exception: " + e.getMessage());
                 return false;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return false;
+//            }
+//
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
+//
+//            // TODO: register the new account here.
+//            return false;
         }
 
         @Override

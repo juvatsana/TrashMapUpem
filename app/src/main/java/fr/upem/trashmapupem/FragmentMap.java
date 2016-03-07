@@ -149,7 +149,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-
+        Log.i("Fragment map INFO","PREPARATION DE ONCREATE");
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_maps, container, false);
         SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 

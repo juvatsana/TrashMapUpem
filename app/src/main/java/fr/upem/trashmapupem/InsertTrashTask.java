@@ -10,6 +10,11 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -63,15 +68,6 @@ public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
         }catch(Exception e){
             Log.e("Exception","Exception: " + e.getMessage());
             return false;
-        }
-
-        for (String credential : DUMMY_CREDENTIALS) {
-            String[] pieces = credential.split(":");
-            if (pieces[0].equals(mEmail)) {
-                // Account exists, return true if the password matches.
-
-                return pieces[1].equals(mPassword);
-            }
         }
 
         return false;
