@@ -99,7 +99,7 @@ public class FragmentListDistance extends Fragment {
                     drawable = R.drawable.iconpbgray;
                     break;
             }
-            Data d = new Data("green",String.valueOf(distance)+" km",drawable);
+            Data d = new Data(type,String.valueOf(distance)+" km",drawable);
             datas.add(d);
         }
 
