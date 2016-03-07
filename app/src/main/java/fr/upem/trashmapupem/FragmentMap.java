@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -222,20 +223,50 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             // Use default InfoWindow frame
             @Override
             public View getInfoWindow(Marker arg0) {
-                return null;
+                View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
+                TextView tvinfoTitle = (TextView) v.findViewById(R.id.infoTitle);
+                TextView tvinfoSnippet = (TextView) v.findViewById(R.id.infoSnippet);
+                ImageView ivinfoimage1 = (ImageView) v.findViewById(R.id.imgInfoImage1);
+                ImageView ivinfoimage2 = (ImageView) v.findViewById(R.id.imgInfoImage2);
+
+                final LatLng ll = arg0.getPosition();
+                String newMarkKey =String.valueOf(ll.latitude)+":"+String.valueOf(ll.longitude);
+
+                if(mapMark.containsKey(newMarkKey))
+                {
+                    PoubelleMarker PM = mapMark.get(newMarkKey);
+                    String type = PM.getType();
+                    switch(type)
+                    {
+                        case "Green":
+                            ivinfoimage1.setImageResource(R.drawable.garbmidgreen);
+                            break;
+                        case "Brown":
+                            ivinfoimage1.setImageResource(R.drawable.garbmidbrown);
+                            break;
+                        case "Yellow":
+                            ivinfoimage1.setImageResource(R.drawable.garbmidyellow);
+                            break;
+                        default:
+                            ivinfoimage1.setImageResource(R.drawable.garbmidgray);
+                            break;
+                    }
+                }
+                else
+                {
+                    ivinfoimage1.setImageResource(R.drawable.garbmidgray);
+                }
+
+                tvinfoTitle.setText(arg0.getTitle());
+                tvinfoSnippet.setText(arg0.getSnippet());
+                return v;
             }
 
             // Defines the contents of the InfoWindow
             @Override
             public View getInfoContents(Marker arg0) {
 
-                View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
-                TextView tvinfoTitle = (TextView) v.findViewById(R.id.infoTitle);
-                TextView tvinfoSnippet = (TextView) v.findViewById(R.id.infoSnippet);
-
-                tvinfoTitle.setText(arg0.getTitle());
-                tvinfoSnippet.setText(arg0.getSnippet());
-                return v;
+               return null;
             }
         });
 

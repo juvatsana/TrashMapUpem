@@ -3,6 +3,7 @@
     <color name="colorPrimary">#009688</color>
     <color name="colorPrimaryDark">#00796B</color>
     <color name="colorAccent">#FFC107</color>
+    <color name="colorInfolayout">#F0FFFF</color>
 
     <color name="colorIndigo">#4b0082</color>
     <color name="colorIndigo_dark">#1f0036 </color>

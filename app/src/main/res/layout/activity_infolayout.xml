@@ -5,7 +5,8 @@
     android:layout_marginBottom="5dp"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@color/colorInfolayout">
     <ImageView
         android:id="@+id/imgInfoImage1"
         android:layout_width="60dp"
@@ -42,7 +43,7 @@
         android:id="@+id/imgInfoImage2"
         android:layout_marginRight="3dp"
         android:layout_marginLeft="3dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/pb"/>
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@drawable/sacgarbage"/>
 </LinearLayout>
