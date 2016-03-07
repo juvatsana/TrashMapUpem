@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class FragmentListDistance extends Fragment {
         rv.setLayoutManager(layoutManager);
         rv.setItemAnimator(new DefaultItemAnimator());
 
-        final List<LatLng> thelist = FragmentMap.getPosOfMapMark();
+        final List<FragmentMap.PoubelleMarker> thelist = FragmentMap.getPosOfMapMark();
         calculListPos(thelist);
         Log.i("OnCreateView","before adapter");
         RVAdapter adapter = new RVAdapter(datas);
@@ -69,13 +70,36 @@ public class FragmentListDistance extends Fragment {
         return root;
     }
 
-    public void calculListPos(List<LatLng> listlat)
+    public void calculListPos(List<FragmentMap.PoubelleMarker> listpm)
     {
-
-        for(LatLng ll:listlat)
+        for(FragmentMap.PoubelleMarker pm:listpm)
         {
+            // Recup Marker and position of HashMap
+            MarkerOptions MO = pm.getMarkerOptions();
+            LatLng ll = MO.getPosition();
+
+            // Calculation of the distance as this instant
+            // Push it on the datas list
             Double distance = CalculationByDistance(new LatLng(48.838790, 2.585753), ll);
-            Data d = new Data("green",String.valueOf(distance)+" km",R.drawable.pb);
+            String type = pm.getType();
+            int drawable = 0;
+            switch(type)
+            {
+                case "Green":
+                    drawable = R.drawable.iconpbgreen;
+                    break;
+                case "Brown":
+                    drawable = R.drawable.iconpbbrown;
+                    break;
+                case "Yellow":
+                    drawable = R.drawable.iconpbyellow;
+                    break;
+                default:
+                    type="Gray";
+                    drawable = R.drawable.iconpbgray;
+                    break;
+            }
+            Data d = new Data("green",String.valueOf(distance)+" km",drawable);
             datas.add(d);
         }
 

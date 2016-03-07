@@ -76,15 +76,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     }
     */
 
-    public static List<LatLng> getPosOfMapMark()
+    public static List<PoubelleMarker> getPosOfMapMark()
     {
-        List<LatLng> list = new ArrayList<>();
+        List<PoubelleMarker> list = new ArrayList<>();
         Iterator it = mapMark.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            PoubelleMarker PM = (PoubelleMarker)pair.getValue();
-            MarkerOptions MO = PM.getMarkerOptions();
-            list.add(MO.getPosition());
+            list.add((PoubelleMarker)pair.getValue());
         }
         return list;
     }
@@ -115,17 +113,30 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
         if(color!=null )
         {
-            if(color.compareTo("Red")==0||color.compareTo("Brown")==0||color.compareTo("Yellow")==0)
+            if(color.compareTo("Green")==0)
             {
-                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
+                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgreen));
+            }
+            if(color.compareTo("Brown")==0)
+            {
+                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbbrown));
+            }
+
+            if(color.compareTo("Yellow")==0)
+            {
+                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbyellow));
             }
         }
         else
         {
-            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
+            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgray));
         }
 
         LatLng LI = newMarker.getPosition();
+        if(LI == null)
+        {
+            return null;
+        }
         String newMarkKey=String.valueOf(LI.latitude)+":"+String.valueOf(LI.longitude);
         if(!mapMark.containsKey(newMarkKey))
         {
@@ -149,7 +160,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        Log.i("Fragment map INFO","PREPARATION DE ONCREATE");
+        Log.i("Fragment map INFO", "PREPARATION DE ONCREATE");
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_maps, container, false);
         SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
@@ -261,10 +272,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     Spinner SPspinner = (Spinner) theview.findViewById(R.id.thespinner);
                                                     String textSpinner = SPspinner.getSelectedItem().toString();
 
-                                                    // init marker
+                                                    // Recup Strings
+                                                    String stringETname = ETname.getText().toString();
+                                                    String stringETcomment = ETcomment.getText().toString();
+
+                                                    // init marker / Cant be null
                                                     MarkerOptions themo = new MarkerOptions().position(point);
 
-                                                    if ((ETname.getText().toString().compareTo("") == 0) && (ETcomment.getText().toString().compareTo("") == 0)) {
+                                                    if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
                                                                 Toast.LENGTH_LONG).show();
@@ -272,12 +287,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
                                                         builderYes.setMessage("Mark added but no description. Thanks you.").show();
                                                         */
-                                                    } else {
-                                                        if (ETname.getText().toString().compareTo("") != 0) {
-                                                            themo.title(ETname.getText().toString());
+                                                    }
+                                                    else
+                                                    {
+                                                        if (stringETname.compareTo("") != 0) {
+                                                            themo.title(stringETname);
                                                         }
-                                                        if (ETcomment.getText().toString().compareTo("") != 0) {
-                                                            themo.snippet(ETcomment.getText().toString());
+                                                        if (stringETcomment.compareTo("") != 0) {
+                                                            themo.snippet(stringETcomment);
                                                         }
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added. Thanks you.",
@@ -287,14 +304,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         builderYes.setMessage("Mark added. Thanks you.").show();
                                                         */
                                                     }
+
                                                     // Recup marker with good garbage color
                                                     MarkerOptions tempMarker = addFragmentMapMarker(themo, textSpinner);
-                                                    if (tempMarker != null) {
-                                                        mMap.addMarker(tempMarker);
-                                                    } else // !!! Maybe we have to manage null Marker !!!
+
+                                                    // it can't be null but we have to manage this
+                                                    if (tempMarker == null)
                                                     {
-                                                        mMap.addMarker(themo);
+                                                        tempMarker = themo;
                                                     }
+                                                    mMap.addMarker(themo);
                                                 }
                                             })
                                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -315,10 +334,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     // Render the layout
                                     builderNo.show();
 
-                                    // Quit ajout
-                                    setOnListenerAjout(false);
-                                    mMap.setOnMapClickListener(null);
-
+                                    // Exit and listening
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
@@ -330,14 +346,22 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     builderYes.setMessage("Mark added. Thanks you.").show();
                                     */
 
-                                    // Add marker by default
-                                    MarkerOptions themo = new MarkerOptions().position(point).icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
-                                    mMap.addMarker(themo);
-                                    addFragmentMapMarker(themo, null);
+                                    // Create the marker with no drawable
+                                    MarkerOptions themo = new MarkerOptions().position(point);
 
-                                    // Quit Ajout
-                                    setOnListenerAjout(false);
-                                    mMap.setOnMapClickListener(null);
+                                    // Recup marker with the good garbage color - by default ...
+                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, null);
+
+                                    // In case if it returns null
+                                    if(tempMarker==null)
+                                    {
+                                        tempMarker = themo;
+                                    }
+
+                                    // At it to the temp map or it will not be render yet ...
+                                    mMap.addMarker(tempMarker);
+
+                                    // Exit and still listening
                                     break;
                             }
                         }
@@ -427,9 +451,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                     builder.setMessage("Do you really want to delete this mark ?").setPositiveButton("Yes", dialogClickListenerDeleteMark)
                             .setNegativeButton("No", dialogClickListenerDeleteMark).show();
 
-                    // Quit ajout
-                    setOnListenerDelete(false);
-                    mMap.setOnMarkerClickListener(null);
+                    // Exit and listening
                     return true;
                 }
             });
@@ -468,10 +490,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     Spinner SPspinner = (Spinner) theview.findViewById(R.id.thespinner);
                                                     String textSpinner = SPspinner.getSelectedItem().toString();
 
+                                                    // Recup string of EditTexts
+                                                    String stringETname = ETname.getText().toString();
+                                                    String stringETcomment = ETcomment.getText().toString();
+
                                                     // init marker
                                                     MarkerOptions themo = new MarkerOptions().position(point);
 
-                                                    if ((ETname.getText().toString().compareTo("") == 0) && (ETcomment.getText().toString().compareTo("") == 0)) {
+                                                    if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
                                                                 Toast.LENGTH_LONG).show();
@@ -480,11 +506,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         builderYes.setMessage("Mark added but no description. Thanks you.").show();
                                                         */
                                                     } else {
-                                                        if (ETname.getText().toString().compareTo("") != 0) {
-                                                            themo.title(ETname.getText().toString());
+                                                        if (stringETname.compareTo("") != 0) {
+                                                            themo.title(stringETname);
                                                         }
-                                                        if (ETcomment.getText().toString().compareTo("") != 0) {
-                                                            themo.snippet(ETcomment.getText().toString());
+                                                        if (stringETcomment.compareTo("") != 0) {
+                                                            themo.snippet(stringETcomment);
                                                         }
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added. Thanks you.",
@@ -496,12 +522,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     }
                                                     // Recup marker with good garbage color
                                                     MarkerOptions tempMarker = addFragmentMapMarker(themo, textSpinner);
-                                                    if (tempMarker != null) {
-                                                        mMap.addMarker(tempMarker);
-                                                    } else // !!! Maybe we have to manage null Marker !!!
+
+                                                    // It can't return null mark but he we have to manage it
+                                                    if (tempMarker == null)
                                                     {
-                                                        mMap.addMarker(themo);
+                                                        tempMarker = themo;
                                                     }
+                                                    mMap.addMarker(tempMarker);
                                                 }
                                             })
                                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -522,10 +549,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     // Render the layout
                                     builderNo.show();
 
-                                    // Quit ajout
-                                    setOnListenerAjout(false);
-                                    mMap.setOnMapClickListener(null);
-
+                                    // Exit and listening
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
@@ -538,49 +562,56 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     */
 
                                     // Add marker by default
-                                    MarkerOptions themo = new MarkerOptions().position(point).icon(BitmapDescriptorFactory.fromResource(R.drawable.pb));
-                                    mMap.addMarker(themo);
-                                    addFragmentMapMarker(themo, null);
+                                    MarkerOptions themo = new MarkerOptions().position(point);
 
-                                    // Quit Ajout
-                                    setOnListenerAjout(false);
-                                    mMap.setOnMapClickListener(null);
+                                    // Return the good garbage color - be default here
+                                    MarkerOptions thenewgenmarker = addFragmentMapMarker(themo, null);
+
+                                    // it can't be null but in case
+                                    if(thenewgenmarker == null)
+                                    {
+                                        thenewgenmarker = themo;
+                                    }
+                                    mMap.addMarker(thenewgenmarker);
+
+                                    // Exit and listenning
                                     break;
                             }
                         }
                     };
+
 
                     // listener for "Try Again?"
-                    final DialogInterface.OnClickListener dialogClickListenerTryAgain = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // Render a message/toast
-                                    Toast.makeText(getActivity(), "GO",
-                                            Toast.LENGTH_LONG).show();
-                                    /*
-                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Go").show();
-                                    */
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a message/toast
-                                    Toast.makeText(getActivity(), "Good Bye.",
-                                            Toast.LENGTH_LONG).show();
-                                    /*
-                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    builderNo.setMessage("Then good bye").show();
-                                    */
-
-                                    // Quit Ajout
-                                    setOnListenerAjout(false);
-                                    mMap.setOnMapClickListener(null);
-                                    break;
-                            }
-                        }
-                    };
+                    //final DialogInterface.OnClickListener dialogClickListenerTryAgain = new DialogInterface.OnClickListener() {
+                    //    @Override
+                    //    public void onClick(DialogInterface dialog, int which) {
+                    //        switch (which) {
+                    //            case DialogInterface.BUTTON_POSITIVE:
+                    //                // Render a message/toast
+                    //                Toast.makeText(getActivity(), "GO",
+                    //                        Toast.LENGTH_LONG).show();
+                    //                /*
+                    //                AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                    //              builderYes.setMessage("Go").show();
+                    //              */
+                    //              break;
+                    //
+                    //            case DialogInterface.BUTTON_NEGATIVE:
+                    //                // Render a message/toast
+                    //                Toast.makeText(getActivity(), "Good Bye.",
+                    //                        Toast.LENGTH_LONG).show();
+                    //                /*
+                    //                AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                    //                builderNo.setMessage("Then good bye").show();
+                    //                */
+                    //
+                    //                // Quit Ajout
+                    //                setOnListenerAjout(false);
+                    //                mMap.setOnMapClickListener(null);
+                    //                break;
+                    //        }
+                    //    }
+                    //};
 
                     // listener for "Are You sure"
                     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -595,10 +626,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a message
-                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    builderNo.setMessage("Try again ?").setPositiveButton("Yes", dialogClickListenerTryAgain)
-                                            .setNegativeButton("No", dialogClickListenerTryAgain).show();
+                                    // Render a message/Toast
+                                    Toast.makeText(getActivity(), "Try again.",
+                                            Toast.LENGTH_LONG).show();
+                                    //AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                                    //builderNo.setMessage("Try again ?").setPositiveButton("Yes", dialogClickListenerTryAgain)
+                                    //        .setNegativeButton("No", dialogClickListenerTryAgain).show();
                                     break;
                             }
                         }
@@ -610,6 +643,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show();
+
+                    // Exit in case of negative reponse for "Are you sure"
+                    // Exit and listening
                 }
             });
         }
