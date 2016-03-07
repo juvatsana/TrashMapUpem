@@ -206,47 +206,30 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         }
         */
 
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            // Use default InfoWindow frame
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            // Defines the contents of the InfoWindow
+            @Override
+            public View getInfoContents(Marker arg0) {
+
+                View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
+                TextView tvinfoTitle = (TextView) v.findViewById(R.id.infoTitle);
+                TextView tvinfoSnippet = (TextView) v.findViewById(R.id.infoSnippet);
+
+                tvinfoTitle.setText(arg0.getTitle());
+                tvinfoSnippet.setText(arg0.getSnippet());
+                return v;
+            }
+        });
+
         if(isOnListenerMain())
         {
-            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-                // Use default InfoWindow frame
-                @Override
-                public View getInfoWindow(Marker arg0) {
-                    return null;
-                }
-
-                // Defines the contents of the InfoWindow
-                @Override
-                public View getInfoContents(Marker arg0) {
-
-                    View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
-                    TextView tvinfoTitle = (TextView) v.findViewById(R.id.infoTitle);
-                    TextView tvinfoSnippet = (TextView) v.findViewById(R.id.infoSnippet);
-
-                    tvinfoTitle.setText(arg0.getTitle());
-                    tvinfoSnippet.setText(arg0.getSnippet());
-                    return v;
-
-                    /*
-                    // Getting view from the layout file info_window_layout
-                    View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
-                    // Getting the position from the marker
-                    LatLng latLng = arg0.getPosition();
-                    // Getting reference to the TextView to set latitude
-                    TextView tvLat = (TextView) v.findViewById(R.id.tv_lat);
-                    // Getting reference to the TextView to set longitude
-                    TextView tvLng = (TextView) v.findViewById(R.id.tv_lng);
-                    // Setting the latitude
-                    tvLat.setText("Latitude:" + latLng.latitude);
-                    // Setting the longitude
-                    tvLng.setText("Longitude:"+ latLng.longitude);
-                    // Returning the view containing InfoWindow contents
-                    return v;
-                    */
-                }
-            });
-
             mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
                 @Override
