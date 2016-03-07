@@ -86,17 +86,17 @@ public class FragmentListDistance extends Fragment {
             switch(type)
             {
                 case "Green":
-                    drawable = R.drawable.iconpbgreen;
+                    drawable = R.drawable.garbagebiggreen;
                     break;
                 case "Brown":
-                    drawable = R.drawable.iconpbbrown;
+                    drawable = R.drawable.garbagebigbrown;
                     break;
                 case "Yellow":
-                    drawable = R.drawable.iconpbyellow;
+                    drawable = R.drawable.garbagebigyellow;
                     break;
                 default:
                     type="Gray";
-                    drawable = R.drawable.iconpbgray;
+                    drawable = R.drawable.garbagebiggray;
                     break;
             }
             Data d = new Data(type,String.valueOf(distance)+" km",drawable);
