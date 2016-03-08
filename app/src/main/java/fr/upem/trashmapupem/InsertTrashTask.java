@@ -26,11 +26,11 @@ import java.net.URL;
  */
 public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
 
-    private final String longitude;
-    private final String latitude;
+    private final double longitude;
+    private final double latitude;
     private final String commentaire;
 
-    InsertTrashTask(String longitude, String latitude,String commentaire) {
+    public InsertTrashTask(double longitude, double latitude,String commentaire) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.commentaire = commentaire;
