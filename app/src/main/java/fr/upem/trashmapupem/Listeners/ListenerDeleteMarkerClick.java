@@ -35,6 +35,8 @@ import java.util.Map;
 
 import fr.upem.trashmapupem.FragmentMap;
 import fr.upem.trashmapupem.R;
+import fr.upem.trashmapupem.Task.DeleteTrashTask;
+import fr.upem.trashmapupem.Task.InsertTrashTask;
 
 import com.google.android.gms.maps.GoogleMap;
 
@@ -47,11 +49,15 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
     private Context activityContext;
     private GoogleMap themMap;
 
+    private DeleteTrashTask deleteTrashTask;
+
     public ListenerDeleteMarkerClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
         this.fragmentActivity = fragmentActivity;
         this.activityContext = activityContext;
         this.themMap = themMap;
+
+        deleteTrashTask = null;
     }
 
     @Override
@@ -64,6 +70,10 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
+
+                        //TODO : trouver une methode pour recuperer l'id de la poubelle selectionner
+                        //deleteTrashTask = new DeleteTrashTask(O);
+                        deleteTrashTask.execute();
 
                         // Delete marker
                         Marker newMarkerToDelete = FragmentMap.removeFragmentMapMarker(markerToDelete);
