@@ -126,22 +126,22 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             switch(color)
             {
                 case BROWN:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapbrown));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbbrown));
                     break;
                 case GREEN:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapgreen));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgreen));
                     break;
                 case GRAY:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapgray));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgray));
                     break;
                 case YELLOW:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapyellow));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbyellow));
                     break;
             }
         }
         else
         {
-            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapgray));
+            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgray));
         }
 
         LatLng LI = newMarker.getPosition();
