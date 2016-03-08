@@ -83,24 +83,24 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
                         ivinfoimage2.setImageResource(R.drawable.pimspbbrown);
                         break;
                     case YELLOW:
-                        ivinfoimage1.setImageResource(R.drawable.garbagebigyellow);
+                        ivinfoimage1.setImageResource(R.drawable.garbmidyellow);
                         ivinfoimage2.setImageResource(R.drawable.pimspbyellow);
                         break;
                     default:
-                        ivinfoimage1.setImageResource(R.drawable.garbagebiggray);
+                        ivinfoimage1.setImageResource(R.drawable.garbmidgray);
                         ivinfoimage2.setImageResource(R.drawable.pimspbgray);
                         break;
                 }
             }
             else
             {
-                ivinfoimage1.setImageResource(R.drawable.garbagebiggray);
+                ivinfoimage1.setImageResource(R.drawable.garbmidgray);
                 ivinfoimage2.setImageResource(R.drawable.pimspbgray);
             }
         }
         else
         {
-            ivinfoimage1.setImageResource(R.drawable.garbagebiggray);
+            ivinfoimage1.setImageResource(R.drawable.garbmidgray);
             ivinfoimage2.setImageResource(R.drawable.pimspbgray);
         }
 
