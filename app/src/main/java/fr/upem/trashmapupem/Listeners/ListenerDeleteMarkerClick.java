@@ -73,7 +73,7 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
 
                         //TODO : trouver une methode pour recuperer l'id de la poubelle selectionner
                         //deleteTrashTask = new DeleteTrashTask(O);
-                        deleteTrashTask.execute();
+                        //deleteTrashTask.execute();
 
                         // Delete marker
                         Marker newMarkerToDelete = FragmentMap.removeFragmentMapMarker(markerToDelete);
