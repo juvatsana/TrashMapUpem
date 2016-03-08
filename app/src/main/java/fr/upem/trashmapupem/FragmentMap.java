@@ -33,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import fr.upem.trashmapupem.Listeners.*;
+
 /**
  * Created by Mourougan on 05/03/2016.
  */
@@ -42,7 +44,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
 
     private GoogleMap mMap;
-    //private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
     private static HashMap<String,PoubelleMarker> mapMark = new HashMap<String,PoubelleMarker>();
     private boolean onListenerAjout=false;
     private boolean onListenerDelete=false;
@@ -88,6 +89,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         return thetype;
     }
 
+    public static PoubelleMarker getPoubelleMarkerFromMap(String key)
+    {
+        if(mapMark.containsKey(key))
+        {
+            return mapMark.get(key);
+        }
+        return null;
+    }
+
     public static List<PoubelleMarker> getPosOfMapMark()
     {
         List<PoubelleMarker> list = new ArrayList<>();
@@ -104,7 +114,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
      * @param newMarker
      * @return sucess or not
      */
-    public Marker removeFragmentMapMarker(Marker newMarker)
+    public static Marker removeFragmentMapMarker(Marker newMarker)
     {
         if(newMarker==null)return null;
 
@@ -119,7 +129,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         return null;
     }
 
-    public MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,FM_TYPE color)
+    public static MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,FM_TYPE color)
     {
         if(newMarker == null)  return null;
 
@@ -286,421 +296,21 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        // Check for Main activity
         if(isOnListenerMain())
         {
-            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
-                @Override
-                public void onMapLongClick(LatLng arg0) {
-                    final LatLng point = arg0;
-
-                    // listener for "Add some contents?"
-                    final DialogInterface.OnClickListener dialogClickListenerAddSomeComment = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // This case to add contents
-
-                                    // Render layout add_content_garbage
-                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    LayoutInflater inflater = getActivity().getLayoutInflater();
-                                    final View theview = inflater.inflate(R.layout.add_content_garbage, null);
-
-                                    builderNo.setView(theview)
-                                            // Add action buttons
-                                            .setPositiveButton(R.string.ajout, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int id) {
-
-                                                    // Recup items of layout
-                                                    EditText ETname = (EditText) theview.findViewById(R.id.thename);
-                                                    EditText ETcomment = (EditText) theview.findViewById(R.id.thecomment);
-                                                    Spinner SPspinner = (Spinner) theview.findViewById(R.id.thespinner);
-                                                    String textSpinner = SPspinner.getSelectedItem().toString();
-
-                                                    // Recup Strings
-                                                    String stringETname = ETname.getText().toString();
-                                                    String stringETcomment = ETcomment.getText().toString();
-
-                                                    // init some variables
-                                                    FM_TYPE thetype = FM_TYPE.GRAY;
-                                                    MarkerOptions themo = new MarkerOptions().position(point);
-
-                                                    // Check Strings name and comment for message/toast
-                                                    if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
-                                                        // Render a message/toast
-                                                        Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
-                                                                Toast.LENGTH_LONG).show();
-                                                        /*
-                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                                        builderYes.setMessage("Mark added but no description. Thanks you.").show();
-                                                        */
-                                                    }
-                                                    else // Add title or description with conditions
-                                                    {
-                                                        if (stringETname.compareTo("") != 0) {
-                                                            themo.title(stringETname);
-                                                        }
-                                                        if (stringETcomment.compareTo("") != 0) {
-                                                            themo.snippet(stringETcomment);
-                                                        }
-                                                        // Render a message/toast
-                                                        Toast.makeText(getActivity(), "Mark added. Thanks you.",
-                                                                Toast.LENGTH_LONG).show();
-                                                        /*
-                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                                        builderYes.setMessage("Mark added. Thanks you.").show();
-                                                        */
-                                                    }
-
-                                                    // Take the good color here because its spinner
-                                                    thetype = FragmentMap.checkFMType(textSpinner);
-
-                                                    // Recup marker with good garbage color
-                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, thetype);
-
-                                                    // it can't be null but we have to manage this
-                                                    if (tempMarker == null)
-                                                    {
-                                                        tempMarker = themo;
-                                                    }
-                                                    mMap.addMarker(themo);
-                                                }
-                                            })
-                                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    // need to cancel the dialog
-
-                                                    //LoginDialogFragment.this.getDialog().cancel();
-                                                }
-                                            });
-
-                                    //Create and load the spinner
-                                    Spinner spinner = (Spinner) theview.findViewById(R.id.thespinner);
-                                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                                            R.array.garbage_colors, android.R.layout.simple_spinner_item);
-                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    spinner.setAdapter(adapter);
-
-                                    // Render the layout
-                                    builderNo.show();
-
-                                    // Exit and listening
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a message/toast
-                                    Toast.makeText(getActivity(), "Mark added. Thanks you.",
-                                            Toast.LENGTH_LONG).show();
-                                    /*
-                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Mark added. Thanks you.").show();
-                                    */
-
-                                    // Create the marker with no drawable
-                                    MarkerOptions themo = new MarkerOptions().position(point);
-
-                                    // Recup marker with the good garbage color - by default ...
-                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, FM_TYPE.GRAY);
-
-                                    // In case if it returns null
-                                    if(tempMarker==null)
-                                    {
-                                        tempMarker = themo;
-                                    }
-
-                                    // At it to the temp map or it will not be render yet ...
-                                    mMap.addMarker(tempMarker);
-
-                                    // Exit and still listening
-                                    break;
-                            }
-                        }
-                    };
-
-                    // listener for "Are You sure"
-                    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // Render a message
-                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Do you want to add some comments ?").setPositiveButton("Yes", dialogClickListenerAddSomeComment)
-                                            .setNegativeButton("No", dialogClickListenerAddSomeComment).show();
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a toast
-                                    Toast.makeText(getActivity(), "Try Again",
-                                            Toast.LENGTH_LONG).show();
-                                    break;
-                            }
-                        }
-                    };
-
-                    android.util.Log.i("onMapClick", "MapClickAdd baby!");
-
-                    // Render a message
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
-
-                }
-            });
+            mMap.setOnMapLongClickListener(new ListenerMainLongClick(getActivity(),getContext(),googleMap));
         }
 
         // Check if DELETE Fragment
         if(isOnListenerDelete())
         {
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
-
-
-                @Override
-                public boolean onMarkerClick(Marker arg0) {
-
-                    final Marker markerToDelete = arg0;
-
-                    // listener for "Do you want to delete this mark?"
-                    final DialogInterface.OnClickListener dialogClickListenerDeleteMark = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE:
-
-                                    // Delete marker
-                                    Marker newMarkerToDelete = removeFragmentMapMarker(markerToDelete);
-                                    markerToDelete.remove();
-
-                                    // Render a message/toast
-                                    Toast.makeText(getActivity(), "Marker Delete.",
-                                            Toast.LENGTH_LONG).show();
-                                    /*
-                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Marker delete").show();
-                                    */
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a message
-                                    Toast.makeText(getActivity(), "Delete canceled...",
-                                            Toast.LENGTH_LONG).show();
-                                    /*
-                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    builderNo.setMessage("Delete canceled...").show();
-                                    */
-                                    break;
-                            }
-                        }
-                    };
-
-                    // Starte die Navigation mit Google Maps, sobald der Marker gedrckt wird
-
-                    // Render a message
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Do you really want to delete this mark ?").setPositiveButton("Yes", dialogClickListenerDeleteMark)
-                            .setNegativeButton("No", dialogClickListenerDeleteMark).show();
-
-                    // Exit and listening
-                    return true;
-                }
-            });
+            mMap.setOnMarkerClickListener(new ListenerDeleteMarkerClick(getActivity(),getContext(),googleMap));
         }
 
         // Check if AJOUT Fragment
         if(isOnListenerAjout()) {
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng arg0) {
-                    final LatLng point = arg0;
-
-                    // listener for "Add some contents?"
-                    final DialogInterface.OnClickListener dialogClickListenerAddSomeComment = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // This case to add contents
-
-                                    // Render layout add_content_garbage
-                                    AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    LayoutInflater inflater = getActivity().getLayoutInflater();
-                                    final View theview = inflater.inflate(R.layout.add_content_garbage, null);
-
-                                    builderNo.setView(theview)
-                                            // Add action buttons
-                                            .setPositiveButton(R.string.ajout, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int id) {
-
-                                                    // Recup items of layout
-                                                    EditText ETname = (EditText) theview.findViewById(R.id.thename);
-                                                    EditText ETcomment = (EditText) theview.findViewById(R.id.thecomment);
-                                                    Spinner SPspinner = (Spinner) theview.findViewById(R.id.thespinner);
-                                                    String textSpinner = SPspinner.getSelectedItem().toString();
-
-                                                    // Recup string of EditTexts
-                                                    String stringETname = ETname.getText().toString();
-                                                    String stringETcomment = ETcomment.getText().toString();
-
-                                                    // init
-                                                    MarkerOptions themo = new MarkerOptions().position(point);
-                                                    FM_TYPE thetype = FM_TYPE.GRAY;
-
-                                                    if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
-                                                        // Render a message/toast
-                                                        Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
-                                                                Toast.LENGTH_LONG).show();
-                                                        /*
-                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                                        builderYes.setMessage("Mark added but no description. Thanks you.").show();
-                                                        */
-                                                    } else {
-                                                        if (stringETname.compareTo("") != 0) {
-                                                            themo.title(stringETname);
-                                                        }
-                                                        if (stringETcomment.compareTo("") != 0) {
-                                                            themo.snippet(stringETcomment);
-                                                        }
-                                                        // Render a message/toast
-                                                        Toast.makeText(getActivity(), "Mark added. Thanks you.",
-                                                                Toast.LENGTH_LONG).show();
-                                                        /*
-                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                                        builderYes.setMessage("Mark added. Thanks you.").show();
-                                                        */
-                                                    }
-                                                    // Take the good color here
-                                                    thetype = FragmentMap.checkFMType(textSpinner);
-
-                                                    // Recup marker with good garbage color
-                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, thetype);
-
-                                                    // It can't return null mark but he we have to manage it
-                                                    if (tempMarker == null) {
-                                                        tempMarker = themo;
-                                                    }
-                                                    mMap.addMarker(tempMarker);
-                                                }
-                                            })
-                                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    // need to cancel the dialog
-
-                                                    //LoginDialogFragment.this.getDialog().cancel();
-                                                }
-                                            });
-
-                                    //Create and load the spinner
-                                    Spinner spinner = (Spinner) theview.findViewById(R.id.thespinner);
-                                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                                            R.array.garbage_colors, android.R.layout.simple_spinner_item);
-                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    spinner.setAdapter(adapter);
-
-                                    // Render the layout
-                                    builderNo.show();
-
-                                    // Exit and listening
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a message/toast
-                                    Toast.makeText(getActivity(), "Mark added. Thanks you.",
-                                            Toast.LENGTH_LONG).show();
-                                    /*
-                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Mark added. Thanks you.").show();
-                                    */
-
-                                    // Add marker by default
-                                    MarkerOptions themo = new MarkerOptions().position(point);
-
-                                    // Return the good garbage color - be default here
-                                    MarkerOptions thenewgenmarker = addFragmentMapMarker(themo, null);
-
-                                    // it can't be null but in case
-                                    if (thenewgenmarker == null) {
-                                        thenewgenmarker = themo;
-                                    }
-                                    mMap.addMarker(thenewgenmarker);
-
-                                    // Exit and listenning
-                                    break;
-                            }
-                        }
-                    };
-
-
-                    // listener for "Try Again?"
-                    //final DialogInterface.OnClickListener dialogClickListenerTryAgain = new DialogInterface.OnClickListener() {
-                    //    @Override
-                    //    public void onClick(DialogInterface dialog, int which) {
-                    //        switch (which) {
-                    //            case DialogInterface.BUTTON_POSITIVE:
-                    //                // Render a message/toast
-                    //                Toast.makeText(getActivity(), "GO",
-                    //                        Toast.LENGTH_LONG).show();
-                    //                /*
-                    //                AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                    //              builderYes.setMessage("Go").show();
-                    //              */
-                    //              break;
-                    //
-                    //            case DialogInterface.BUTTON_NEGATIVE:
-                    //                // Render a message/toast
-                    //                Toast.makeText(getActivity(), "Good Bye.",
-                    //                        Toast.LENGTH_LONG).show();
-                    //                /*
-                    //                AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                    //                builderNo.setMessage("Then good bye").show();
-                    //                */
-                    //
-                    //                // Quit Ajout
-                    //                setOnListenerAjout(false);
-                    //                mMap.setOnMapClickListener(null);
-                    //                break;
-                    //        }
-                    //    }
-                    //};
-
-                    // listener for "Are You sure"
-                    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // Render a message
-                                    AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                    builderYes.setMessage("Do you want to add some comments ?").setPositiveButton("Yes", dialogClickListenerAddSomeComment)
-                                            .setNegativeButton("No", dialogClickListenerAddSomeComment).show();
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // Render a message/Toast
-                                    Toast.makeText(getActivity(), "Try again.",
-                                            Toast.LENGTH_LONG).show();
-                                    //AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                                    //builderNo.setMessage("Try again ?").setPositiveButton("Yes", dialogClickListenerTryAgain)
-                                    //        .setNegativeButton("No", dialogClickListenerTryAgain).show();
-                                    break;
-                            }
-                        }
-                    };
-
-                    android.util.Log.i("onMapClick", "MapClickAdd baby!");
-
-                    // Render a message
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
-
-                    // Exit in case of negative reponse for "Are you sure"
-                    // Exit and listening
-                }
-            });
+            mMap.setOnMapClickListener(new ListenerAddClick(getActivity(),getContext(),googleMap));
         }
     }
 

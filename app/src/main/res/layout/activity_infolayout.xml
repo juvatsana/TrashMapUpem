@@ -45,5 +45,5 @@
         android:layout_marginLeft="3dp"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@drawable/pb"/>
+        android:src="@drawable/pimspbgray"/>
 </LinearLayout>
