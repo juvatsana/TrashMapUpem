@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="@color/colorInfoBulle">
+    android:background="@color/colorBlanc">
     <ImageView
         android:id="@+id/imgInfoImage1"
         android:layout_width="60dp"
