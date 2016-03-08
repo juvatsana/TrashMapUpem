@@ -38,25 +38,8 @@ import java.util.Map;
  */
 public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
-    public class PoubelleMarker {
-        String type;
-        MarkerOptions marker;
 
-        PoubelleMarker(String type, MarkerOptions marker) {
-            this.type = type;
-            this.marker = marker;
-        }
-
-        public String getType()
-        {
-            return type;
-        }
-
-        public MarkerOptions getMarkerOptions()
-        {
-            return marker;
-        }
-    }
+    public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
 
     private GoogleMap mMap;
     //private static HashMap<String,MarkerOptions> mapMark = new HashMap<String,MarkerOptions>();
@@ -76,6 +59,29 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     }
     */
+
+    public static FM_TYPE checkFMType(String type)
+    {
+        FM_TYPE thetype = FM_TYPE.GRAY;
+        if(type==null)return thetype;
+
+        // Need to check the same value of the array garbage_colors in strings.xml ...
+        switch(type)
+        {
+            case "Brown":
+                thetype = FM_TYPE.BROWN;
+                break;
+            case "Yellow":
+                thetype = FM_TYPE.YELLOW;
+                break;
+            case "Green":
+                thetype = FM_TYPE.GREEN;
+                break;
+            default:
+                break;
+        }
+        return thetype;
+    }
 
     public static List<PoubelleMarker> getPosOfMapMark()
     {
@@ -108,24 +114,26 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         return null;
     }
 
-    public MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,String color)
+    public MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,FM_TYPE color)
     {
         if(newMarker == null)  return null;
 
         if(color!=null )
         {
-            if(color.compareTo("Green")==0)
+            switch(color)
             {
-                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgreen));
-            }
-            if(color.compareTo("Brown")==0)
-            {
-                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbbrown));
-            }
-
-            if(color.compareTo("Yellow")==0)
-            {
-                newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbyellow));
+                case BROWN:
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbbrown));
+                    break;
+                case GREEN:
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgreen));
+                    break;
+                case GRAY:
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgray));
+                    break;
+                case YELLOW:
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbyellow));
+                    break;
             }
         }
         else
@@ -134,16 +142,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         }
 
         LatLng LI = newMarker.getPosition();
-        if(LI == null)
-        {
-            return null;
-        }
         String newMarkKey=String.valueOf(LI.latitude)+":"+String.valueOf(LI.longitude);
         if(!mapMark.containsKey(newMarkKey))
         {
             if(color==null)
             {
-                mapMark.put(newMarkKey,new PoubelleMarker("Brown", newMarker));
+                mapMark.put(newMarkKey,new PoubelleMarker(FM_TYPE.GRAY, newMarker));
             }
             else
             {
@@ -188,7 +192,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 .title("UPEM MLV")
                 .snippet("Info: Premiere poubelle au monde")
                 .draggable(true)
-                .flat(true),"Brown");
+                .flat(true),FM_TYPE.BROWN);
 
         /*
         //Position d'un marker poubelle
@@ -235,26 +239,33 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 if(mapMark.containsKey(newMarkKey))
                 {
                     PoubelleMarker PM = mapMark.get(newMarkKey);
-                    String type = PM.getType();
-                    switch(type)
+                    FM_TYPE type = PM.getType();
+                    if(type!=null)
                     {
-                        case "Green":
-                            ivinfoimage1.setImageResource(R.drawable.garbmidgreen);
-                            break;
-                        case "Brown":
-                            ivinfoimage1.setImageResource(R.drawable.garbmidbrown);
-                            break;
-                        case "Yellow":
-                            ivinfoimage1.setImageResource(R.drawable.garbmidyellow);
-                            break;
-                        default:
-                            ivinfoimage1.setImageResource(R.drawable.garbmidgray);
-                            break;
+                        switch(type)
+                        {
+                            case GREEN:
+                                ivinfoimage1.setImageResource(R.drawable.poubgreen);
+                                break;
+                            case BROWN:
+                                ivinfoimage1.setImageResource(R.drawable.poubbrown);
+                                break;
+                            case YELLOW:
+                                ivinfoimage1.setImageResource(R.drawable.poubyellow);
+                                break;
+                            default:
+                                ivinfoimage1.setImageResource(R.drawable.poubgray);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        ivinfoimage1.setImageResource(R.drawable.poubgray);
                     }
                 }
                 else
                 {
-                    ivinfoimage1.setImageResource(R.drawable.garbmidgray);
+                    ivinfoimage1.setImageResource(R.drawable.poubgray);
                 }
 
                 tvinfoTitle.setText(arg0.getTitle());
@@ -307,9 +318,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     String stringETname = ETname.getText().toString();
                                                     String stringETcomment = ETcomment.getText().toString();
 
-                                                    // init marker / Cant be null
+                                                    // init some variables
+                                                    FM_TYPE thetype = FM_TYPE.GRAY;
                                                     MarkerOptions themo = new MarkerOptions().position(point);
 
+                                                    // Check Strings name and comment for message/toast
                                                     if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
                                                         // Render a message/toast
                                                         Toast.makeText(getActivity(), "Mark added but no description. Thanks you.",
@@ -319,7 +332,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         builderYes.setMessage("Mark added but no description. Thanks you.").show();
                                                         */
                                                     }
-                                                    else
+                                                    else // Add title or description with conditions
                                                     {
                                                         if (stringETname.compareTo("") != 0) {
                                                             themo.title(stringETname);
@@ -336,8 +349,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         */
                                                     }
 
+                                                    // Take the good color here
+                                                    thetype = FragmentMap.checkFMType(textSpinner);
+
                                                     // Recup marker with good garbage color
-                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, textSpinner);
+                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, thetype);
 
                                                     // it can't be null but we have to manage this
                                                     if (tempMarker == null)
@@ -489,8 +505,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         }
 
         // Check if AJOUT Fragment
-        if(isOnListenerAjout())
-        {
+        if(isOnListenerAjout()) {
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng arg0) {
@@ -525,8 +540,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                     String stringETname = ETname.getText().toString();
                                                     String stringETcomment = ETcomment.getText().toString();
 
-                                                    // init marker
+                                                    // init
                                                     MarkerOptions themo = new MarkerOptions().position(point);
+                                                    FM_TYPE thetype = FM_TYPE.GRAY;
 
                                                     if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
                                                         // Render a message/toast
@@ -551,12 +567,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         builderYes.setMessage("Mark added. Thanks you.").show();
                                                         */
                                                     }
+                                                    // Take the good color here
+                                                    thetype = FragmentMap.checkFMType(textSpinner);
+
                                                     // Recup marker with good garbage color
-                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, textSpinner);
+                                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, thetype);
 
                                                     // It can't return null mark but he we have to manage it
-                                                    if (tempMarker == null)
-                                                    {
+                                                    if (tempMarker == null) {
                                                         tempMarker = themo;
                                                     }
                                                     mMap.addMarker(tempMarker);
@@ -599,8 +617,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     MarkerOptions thenewgenmarker = addFragmentMapMarker(themo, null);
 
                                     // it can't be null but in case
-                                    if(thenewgenmarker == null)
-                                    {
+                                    if (thenewgenmarker == null) {
                                         thenewgenmarker = themo;
                                     }
                                     mMap.addMarker(thenewgenmarker);

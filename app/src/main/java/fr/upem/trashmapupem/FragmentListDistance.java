@@ -62,7 +62,7 @@ public class FragmentListDistance extends Fragment {
         rv.setLayoutManager(layoutManager);
         rv.setItemAnimator(new DefaultItemAnimator());
 
-        final List<FragmentMap.PoubelleMarker> thelist = FragmentMap.getPosOfMapMark();
+        final List<PoubelleMarker> thelist = FragmentMap.getPosOfMapMark();
         calculListPos(thelist);
         Log.i("OnCreateView","before adapter");
         RVAdapter adapter = new RVAdapter(datas);
@@ -70,9 +70,9 @@ public class FragmentListDistance extends Fragment {
         return root;
     }
 
-    public void calculListPos(List<FragmentMap.PoubelleMarker> listpm)
+    public void calculListPos(List<PoubelleMarker> listpm)
     {
-        for(FragmentMap.PoubelleMarker pm:listpm)
+        for(PoubelleMarker pm:listpm)
         {
             // Recup Marker and position of HashMap
             MarkerOptions MO = pm.getMarkerOptions();
