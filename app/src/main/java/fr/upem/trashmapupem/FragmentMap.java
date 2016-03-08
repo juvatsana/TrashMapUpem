@@ -49,18 +49,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private boolean onListenerDelete=false;
     private boolean onListenerMain=true;
 
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mapFragment.getMapAsync(this);
-        return inflater.inflate(R.layout.activity_maps, container, false);
-
-
-    }
-    */
-
     /**
      * Only use for convert a string to FM_TYPE
      * @param type
@@ -138,22 +126,22 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             switch(color)
             {
                 case BROWN:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbbrown));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapbrown));
                     break;
                 case GREEN:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgreen));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapgreen));
                     break;
                 case GRAY:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgray));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapgray));
                     break;
                 case YELLOW:
-                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbyellow));
+                    newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapyellow));
                     break;
             }
         }
         else
         {
-            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.iconpbgray));
+            newMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.markmapgray));
         }
 
         LatLng LI = newMarker.getPosition();
@@ -185,7 +173,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
         myMAPF.getMapAsync(this); // Call onMapReady
-        //onMapReady(mMap);
         return root;
     }
 
@@ -201,25 +188,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 new LatLng(48.8392733, 2.5850778), 16));
 
         addFragmentMapMarker(new MarkerOptions()
-                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
                 .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                 .position(new LatLng(48.838790, 2.585753))
                 .title("UPEM MLV")
                 .snippet("Info: Premiere poubelle au monde")
                 .draggable(true)
                 .flat(true),FM_TYPE.BROWN);
-
-        /*
-        //Position d'un marker poubelle
-        mMap.addMarker(new MarkerOptions()
-                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
-                .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-                .position(new LatLng(48.838790, 2.585753))
-                .title("UPEM MLV")
-                .snippet("Info: Premiere poubelle au monde")
-                .draggable(true)
-                .flat(true));
-        */
 
         // Load application markers
         Iterator it = mapMark.entrySet().iterator();
@@ -229,72 +203,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             mMap.addMarker(PM.getMarkerOptions());
         }
 
-        /*
-        for (MarkerOptions ma : listMark) {
-            if (ma != null) {
-                mMap.addMarker(ma);
-            }
-        }
-        */
-
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            // Use default InfoWindow frame
-            @Override
-            public View getInfoWindow(Marker arg0) {
-                View v = getActivity().getLayoutInflater().inflate(R.layout.activity_infolayout, null);
-                TextView tvinfoTitle = (TextView) v.findViewById(R.id.infoTitle);
-                TextView tvinfoSnippet = (TextView) v.findViewById(R.id.infoSnippet);
-                ImageView ivinfoimage1 = (ImageView) v.findViewById(R.id.imgInfoImage1);
-                ImageView ivinfoimage2 = (ImageView) v.findViewById(R.id.imgInfoImage2);
-
-                final LatLng ll = arg0.getPosition();
-                String newMarkKey =String.valueOf(ll.latitude)+":"+String.valueOf(ll.longitude);
-
-                if(mapMark.containsKey(newMarkKey))
-                {
-                    PoubelleMarker PM = mapMark.get(newMarkKey);
-                    FM_TYPE type = PM.getType();
-                    if(type!=null)
-                    {
-                        switch(type)
-                        {
-                            case GREEN:
-                                ivinfoimage1.setImageResource(R.drawable.poubgreen);
-                                break;
-                            case BROWN:
-                                ivinfoimage1.setImageResource(R.drawable.poubbrown);
-                                break;
-                            case YELLOW:
-                                ivinfoimage1.setImageResource(R.drawable.poubyellow);
-                                break;
-                            default:
-                                ivinfoimage1.setImageResource(R.drawable.poubgray);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        ivinfoimage1.setImageResource(R.drawable.poubgray);
-                    }
-                }
-                else
-                {
-                    ivinfoimage1.setImageResource(R.drawable.poubgray);
-                }
-
-                tvinfoTitle.setText(arg0.getTitle());
-                tvinfoSnippet.setText(arg0.getSnippet());
-                return v;
-            }
-
-            // Defines the contents of the InfoWindow
-            @Override
-            public View getInfoContents(Marker arg0) {
-
-               return null;
-            }
-        });
+        mMap.setInfoWindowAdapter(new ListenerInfoWindow(getActivity(),getContext(),googleMap));
 
         // Check for Main activity
         if(isOnListenerMain())
