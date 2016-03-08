@@ -35,7 +35,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
 
     @Override
     public void onBindViewHolder(PbViewHolder holder, int position) {
-        holder.type.setText(datas.get(position).type);
+        holder.type.setText(datas.get(position).type.toString());
         holder.distance.setText(datas.get(position).distance);
         holder.photoPb.setImageResource(datas.get(position).photoPb);
     }

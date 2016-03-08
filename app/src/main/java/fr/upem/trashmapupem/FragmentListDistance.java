@@ -29,11 +29,11 @@ public class FragmentListDistance extends Fragment {
 
 
     class Data {
-        String type;
+        FragmentMap.FM_TYPE type;
         String distance;
         int photoPb;
 
-        Data(String type, String distance, int photoPb) {
+        Data(FragmentMap.FM_TYPE type, String distance, int photoPb) {
             this.type = type;
             this.distance = distance;
             this.photoPb = photoPb;
@@ -81,21 +81,20 @@ public class FragmentListDistance extends Fragment {
             // Calculation of the distance as this instant
             // Push it on the datas list
             Double distance = CalculationByDistance(new LatLng(48.838790, 2.585753), ll);
-            String type = pm.getType();
+            FragmentMap.FM_TYPE type = pm.getType();
             int drawable = 0;
             switch(type)
             {
-                case "Green":
+                case GREEN:
                     drawable = R.drawable.garbagebiggreen;
                     break;
-                case "Brown":
+                case BROWN:
                     drawable = R.drawable.garbagebigbrown;
                     break;
-                case "Yellow":
+                case YELLOW:
                     drawable = R.drawable.garbagebigyellow;
                     break;
                 default:
-                    type="Gray";
                     drawable = R.drawable.garbagebiggray;
                     break;
             }

@@ -60,6 +60,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     }
     */
 
+    /**
+     * Only use for convert a string to FM_TYPE
+     * @param type
+     * @return FM_TYPE
+     */
     public static FM_TYPE checkFMType(String type)
     {
         FM_TYPE thetype = FM_TYPE.GRAY;
@@ -349,7 +354,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                                         */
                                                     }
 
-                                                    // Take the good color here
+                                                    // Take the good color here because its spinner
                                                     thetype = FragmentMap.checkFMType(textSpinner);
 
                                                     // Recup marker with good garbage color
@@ -397,7 +402,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                                     MarkerOptions themo = new MarkerOptions().position(point);
 
                                     // Recup marker with the good garbage color - by default ...
-                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, null);
+                                    MarkerOptions tempMarker = addFragmentMapMarker(themo, FM_TYPE.GRAY);
 
                                     // In case if it returns null
                                     if(tempMarker==null)
