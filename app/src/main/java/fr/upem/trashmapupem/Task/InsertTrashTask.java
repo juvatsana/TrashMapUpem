@@ -1,4 +1,4 @@
-package fr.upem.trashmapupem;
+package fr.upem.trashmapupem.Task;
 
 /**
  * Created by Vatsana on 07/03/2016.
