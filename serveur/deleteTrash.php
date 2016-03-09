@@ -1,9 +1,10 @@
 <?php
 $con=mysqli_connect("mysql.hostinger.fr","u978485106_admin","trashadmin","u978485106_trash");
 
-$id = $_GET['id'];
+$longitude = $_GET['longitude'];
+$latitude = $_GET['latitude'];
 
-$sql="DELETE FROM 'poubelle' WHERE 'id_poubelle'='$id'";
+$sql="DELETE FROM poubelle WHERE longitude='$longitude' AND latitude='$latitude'";
 
 if (mysqli_query($con,$sql))
 {
@@ -11,6 +12,6 @@ if (mysqli_query($con,$sql))
 }
 else
 {
-	echo "ERROR delete";
+	echo "ERROR deleteTrash";
 }
 ?>

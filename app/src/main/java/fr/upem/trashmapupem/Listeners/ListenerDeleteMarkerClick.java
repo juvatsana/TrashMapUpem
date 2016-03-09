@@ -61,7 +61,7 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(final Marker marker) {
         final Marker markerToDelete = marker;
 
         // listener for "Do you want to delete this mark?"
@@ -70,9 +70,7 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-
-                        //TODO : trouver une methode pour recuperer l'id de la poubelle selectionner
-                        //deleteTrashTask = new DeleteTrashTask(O);
+                        //deleteTrashTask = new DeleteTrashTask(markerToDelete.getPosition().longitude,markerToDelete.getPosition().latitude);
                         //deleteTrashTask.execute();
 
                         // Delete marker

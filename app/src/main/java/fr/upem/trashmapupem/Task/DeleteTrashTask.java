@@ -31,18 +31,20 @@ import fr.upem.trashmapupem.R;
  */
 public class DeleteTrashTask extends AsyncTask<Void, Void, Boolean> {
 
-    private int idTrash;
+    private double longitude;
+    private double latitude;
 
-    public DeleteTrashTask(int idTrash)
+    public DeleteTrashTask(double longitude,double latitude)
     {
-        this.idTrash = idTrash;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
 
         try {
-            String link = "http://jvorabou.esy.es/deleteTrash.php?id="+idTrash+"";
+            String link = "http://jvorabou.esy.es/deleteTrash.php?longitude="+longitude+"&latitude="+latitude;
 
             URL url = new URL(link);
             HttpClient client = new DefaultHttpClient();
