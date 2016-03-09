@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -21,7 +22,6 @@ import android.widget.Toast;
 import android.provider.Settings;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -32,9 +32,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 
 import com.google.android.gms.drive.*;
 
@@ -52,7 +57,7 @@ import fr.upem.trashmapupem.Task.GetAllTrashTask;
 /**
  * Created by Mourougan on 05/03/2016.
  */
-public class FragmentMap extends Fragment implements OnMapReadyCallback,ConnectionCallbacks,OnConnectionFailedListener {
+public class FragmentMap extends Fragment implements OnMapReadyCallback,ConnectionCallbacks,OnConnectionFailedListener,LocationListener {
 
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
@@ -64,7 +69,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     private boolean onListenerMain=true;
 
     private GoogleApiClient playServices;
-    private Location lastLocation;
+    private LocationRequest lastLocation;
 
     /**
      * Only use for convert a string to FM_TYPE
@@ -220,35 +225,43 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Google API","OK");
+        lastLocation = LocationRequest.create();
+        lastLocation.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        lastLocation.setInterval(1000); // Update location every second
         try
         {
-            lastLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    playServices, lastLocation, this);
+            Location mobileLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
+            if (mobileLocation != null) {
+                Log.i("OnConnect Position", mobileLocation.getLatitude()+":"+mobileLocation.getLongitude());
+            }
+            else
+            {
+                Log.i("OnConnect Position","null");
+            }
         }
         catch(SecurityException se)
         {
             Log.i("Security on connect","exception");
         }
-        if (lastLocation != null) {
-            Toast.makeText(getActivity(), lastLocation.getLatitude()+":"+lastLocation.getLongitude(),
-                    Toast.LENGTH_LONG).show();
-            Log.i("Location",lastLocation.getLatitude()+":"+lastLocation.getLongitude());
-        }
-        else
-        {
-            Log.i("Location","null");
-        }
-    }
 
-    @Override
+        }
+
+        @Override
     public void onConnectionSuspended(int i) {
         Log.d("Connection suspended", "Connection suspended");
-    }
+        }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d("Connection failed", "Connection failed");
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.i("Location received: ", location.toString());
+    }
 
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
