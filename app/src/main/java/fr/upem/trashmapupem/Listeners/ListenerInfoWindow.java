@@ -100,8 +100,8 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
         }
         else
         {
-            ivinfoimage1.setImageResource(R.drawable.garbmidgray);
-            ivinfoimage2.setImageResource(R.drawable.pimspbgray);
+            ivinfoimage1.setImageResource(R.drawable.manicon);
+            ivinfoimage2.setImageResource(R.drawable.manicon);
         }
 
         tvinfoTitle.setText(arg0.getTitle());
