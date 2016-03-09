@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -31,6 +31,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+
+import com.google.android.gms.drive.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +52,7 @@ import fr.upem.trashmapupem.Task.GetAllTrashTask;
 /**
  * Created by Mourougan on 05/03/2016.
  */
-public class FragmentMap extends Fragment implements OnMapReadyCallback, LocationListener, LocationSource {
+public class FragmentMap extends Fragment implements OnMapReadyCallback,ConnectionCallbacks,OnConnectionFailedListener {
 
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
@@ -57,8 +63,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, Locatio
     private boolean onListenerDelete=false;
     private boolean onListenerMain=true;
 
-    private OnLocationChangedListener mListener;
-    private LocationManager locationManager;
+    private GoogleApiClient playServices;
+    private Location lastLocation;
 
     /**
      * Only use for convert a string to FM_TYPE
@@ -182,56 +188,67 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, Locatio
     }
 
     @Override
-    public void activate(OnLocationChangedListener listener)
-    {
-        mListener = listener;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        Log.i("Fragment map INFO", "PREPARATION DE ONCREATE");
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_maps, container, false);
+
+        playServices = new GoogleApiClient.Builder(getContext())
+                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        return root;
     }
 
     @Override
-    public void deactivate()
+    public void onStart()
     {
-        mListener = null;
+        playServices.connect();
+        SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        myMAPF.getMapAsync(this); // Call onMapReady
+        super.onStart();
     }
 
     @Override
-    public void onLocationChanged(Location location)
+    public void onStop()
     {
-        if( mListener != null )
+        playServices.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.i("Google API","OK");
+        try
         {
-            mListener.onLocationChanged(location);
-
-            //Move the camera to the user's location once it's available!
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+            lastLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
+        }
+        catch(SecurityException se)
+        {
+            Log.i("Security on connect","exception");
+        }
+        if (lastLocation != null) {
+            Toast.makeText(getActivity(), lastLocation.getLatitude()+":"+lastLocation.getLongitude(),
+                    Toast.LENGTH_LONG).show();
+            Log.i("Location",lastLocation.getLatitude()+":"+lastLocation.getLongitude());
+        }
+        else
+        {
+            Log.i("Location","null");
         }
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras)
-    {
-        Toast.makeText(getActivity(), "status changed", Toast.LENGTH_SHORT).show();
+    public void onConnectionSuspended(int i) {
+        Log.d("Connection suspended", "Connection suspended");
     }
 
     @Override
-    public void onProviderDisabled(String provider)
-    {
-        Toast.makeText(getActivity(), "provider disabled", Toast.LENGTH_SHORT).show();
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d("Connection failed", "Connection failed");
     }
 
-    @Override
-    public void onProviderEnabled(String provider)
-    {
-        Toast.makeText(getActivity(), "provider enabled", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        Log.i("Fragment map INFO", "PREPARATION DE ONCREATE");
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_maps, container, false);
-        SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-
-        myMAPF.getMapAsync(this); // Call onMapReady
-        return root;
-    }
 
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -274,88 +291,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, Locatio
 
         mMap = googleMap;
 
-        // First check for set the location enabled
-        if(!mMap.isMyLocationEnabled())
-        {
-            try{
-                mMap.setMyLocationEnabled(true); // Try to get the location
-            }
-            catch(SecurityException se)
-            {
-                System.err.println("Aie okey you will be locate in Univ MLV.");
-                showSettingsAlert(); // Pour régler les paramètres pour le prochain lancement de l'appli ...
-            }
-        }
-
-        // Second check just in case that the first check is not well managed
-        if(mMap.isMyLocationEnabled())
-        {
-            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-            if(locationManager != null)
-            {
-                boolean gpsIsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                boolean networkIsEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-                if(gpsIsEnabled)
-                {
-                    Log.i("GPS Enable","YES");
-                    try{
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 10F, this);
-                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        if(location!=null)
-                        {
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-                        }
-                        else
-                        {
-                            Log.i("GPS Location","null");
-                        }
-                    }
-                    catch(SecurityException se) {
-                        Log.i("GPS Security violation.", "YES");
-                    }
-                }
-                else if(networkIsEnabled)
-                {
-                    Log.i("Network Enable","YES (not gps)");
-                    try{
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000L, 10F, this);
-                        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if(location!=null)
-                        {
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-                        }
-                        else
-                        {
-                            Log.i("network Location","null");
-                        }
-                    }
-                    catch(SecurityException se) {
-                        Log.i("Net Security violation.", "YES");
-                    }
-                }
-                else
-                {
-                    Log.i("Cant resolve internet","oups");
-                    //Show an error dialog that GPS is disabled.
-                }
-            }
-            else
-            {
-                Log.i("Cant resolve location","oups");
-                //Show a generic error dialog since LocationManager is null for some reason
-            }
-            Log.i("My location is enabled", "YES");
-
-            // If location manager is good, initiate the camera
-
-        }
-        // DEBUT : uncomment when location is fixed
-        //else
-        //{
-            // Init current position as default on UPEM MLV
-            mMap.addMarker(new MarkerOptions()
+        mMap.addMarker(new MarkerOptions()
                     .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                     .position(new LatLng(48.838790, 2.585753))
                     .title("UPEM MLV")
@@ -363,13 +299,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, Locatio
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman))
                     .flat(true));
 
-            //Position caméra
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(48.8392733, 2.5850778), 16));
-
-        //    Log.i("My location is enabled", "NO");
-        //}
-        // FIN : uncomment when location is fixed
+        //Position caméra
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(48.8392733, 2.5850778), 16));
 
         // Load application markers
         Iterator it = mapMark.entrySet().iterator();
