@@ -20,11 +20,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import fr.upem.trashmapupem.Task.GetAllTrashTask;
+
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
+
+    private GetAllTrashTask getTrashTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         fragmentClass = FragmentMap.class;
         try {
             fragment = (Fragment) FragmentMap.newInstance(this);
+
+            Log.e("LaunchTask", "Ok");
+
+            getTrashTask = new GetAllTrashTask();
+            getTrashTask.execute();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

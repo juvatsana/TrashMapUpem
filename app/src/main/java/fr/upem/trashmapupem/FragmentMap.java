@@ -32,8 +32,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 import fr.upem.trashmapupem.Listeners.*;
+import fr.upem.trashmapupem.Task.GetAllTrashTask;
 
 /**
  * Created by Mourougan on 05/03/2016.
@@ -123,6 +125,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
         if(color!=null )
         {
+
             switch(color)
             {
                 case BROWN:
@@ -179,7 +182,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        Log.e("RDY", "RDY");
+        /*
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
 
         mMap = googleMap;
 

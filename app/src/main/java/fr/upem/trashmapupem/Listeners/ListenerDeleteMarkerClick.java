@@ -70,8 +70,8 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-                        //deleteTrashTask = new DeleteTrashTask(markerToDelete.getPosition().longitude,markerToDelete.getPosition().latitude);
-                        //deleteTrashTask.execute();
+                        deleteTrashTask = new DeleteTrashTask(markerToDelete.getPosition().longitude,markerToDelete.getPosition().latitude);
+                        deleteTrashTask.execute();
 
                         // Delete marker
                         Marker newMarkerToDelete = FragmentMap.removeFragmentMapMarker(markerToDelete);
