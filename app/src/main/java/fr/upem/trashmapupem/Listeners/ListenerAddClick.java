@@ -75,11 +75,6 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                         FragmentMap.FM_TYPE thetype = FragmentMap.FM_TYPE.GRAY;
 
                                         if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
-
-                                            //Ajout de la poubelle en base sans commentaire
-                                            insertTask = new InsertTrashTask(point.longitude,point.latitude,"");
-                                            insertTask.execute();
-
                                             // Render a message/toast
                                             Toast.makeText(fragmentActivity, "Mark added but no description. Thanks you.",
                                                     Toast.LENGTH_LONG).show();
@@ -88,11 +83,6 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                                         builderYes.setMessage("Mark added but no description. Thanks you.").show();
                                                         */
                                         } else {
-
-                                            //Ajout d'une poubelle en base avec commentaire
-                                            insertTask = new InsertTrashTask(point.longitude,point.latitude,stringETcomment);
-                                            insertTask.execute();
-
                                             if (stringETname.compareTo("") != 0) {
                                                 themo.title(stringETname);
                                             }
@@ -109,6 +99,10 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                         }
                                         // Take the good color here
                                         thetype = FragmentMap.checkFMType(textSpinner);
+
+                                        //Ajout d'une poubelle en base avec commentaire
+                                        insertTask = new InsertTrashTask(point.longitude,point.latitude,stringETname,stringETcomment,thetype.toString());
+                                        insertTask.execute();
 
                                         // Recup marker with good garbage color
                                         MarkerOptions tempMarker = FragmentMap.addFragmentMapMarker(themo, thetype);

@@ -59,18 +59,18 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     public static FM_TYPE checkFMType(String type)
     {
         FM_TYPE thetype = FM_TYPE.GRAY;
-        if(type==null)return thetype;
+        if(type.isEmpty()) return thetype;
 
         // Need to check the same value of the array garbage_colors in strings.xml ...
         switch(type)
         {
-            case "Brown":
+            case "BROWN":
                 thetype = FM_TYPE.BROWN;
                 break;
-            case "Yellow":
+            case "YELLOW":
                 thetype = FM_TYPE.YELLOW;
                 break;
-            case "Green":
+            case "GREEN":
                 thetype = FM_TYPE.GREEN;
                 break;
             default:

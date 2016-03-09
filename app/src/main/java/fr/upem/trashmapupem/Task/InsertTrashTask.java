@@ -28,12 +28,16 @@ public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
 
     private final double longitude;
     private final double latitude;
+    private final String titre;
     private final String commentaire;
+    private final String couleur;
 
-    public InsertTrashTask(double longitude, double latitude,String commentaire) {
+    public InsertTrashTask(double longitude, double latitude,String commentaire,String titre,String couleur) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.commentaire = commentaire;
+        this.titre = titre;
+        this.couleur = couleur;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
             // Simulate network access.
             //Thread.sleep(2000);
 
-            String link = "http://jvorabou.esy.es/insertTrash.php?username=julien&password=julien&longitude="+longitude+"&latitude="+latitude+"&commentaire="+commentaire+"";
+            String link = "http://jvorabou.esy.es/insertTrash.php?username=julien&password=julien&longitude="+longitude+"&latitude="+latitude+"&titre="+titre+"&commentaire="+commentaire+"&couleur="+couleur;
 
             URL url = new URL(link);
             HttpClient client = new DefaultHttpClient();
@@ -63,6 +67,7 @@ public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
             in.close();
             Log.i("insert resultat", sb.toString());
             if (sb.toString().equals("Trash have been inserted successfully") ){
+                Log.i("infosucess","goood");
                 return true;
             }
         }catch(Exception e){

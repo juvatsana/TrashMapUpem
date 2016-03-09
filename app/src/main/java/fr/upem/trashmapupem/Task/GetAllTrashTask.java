@@ -39,13 +39,15 @@ import fr.upem.trashmapupem.R;
 public class GetAllTrashTask extends AsyncTask<Void, Void, Boolean> {
 
     private HashMap<String,MarkerOptions> mapTrash;
+    private HashMap<String,String> mapTrashColor;
 
     public GetAllTrashTask()
     {
         mapTrash = new HashMap<>();
+        mapTrashColor = new HashMap<>();
     }
 
-    //TODO : ajouter un titre et couleur dans les webservies
+
     public void jsonToMap(String t) throws JSONException {
 
         JSONArray array = new JSONArray(t);
@@ -55,16 +57,19 @@ public class GetAllTrashTask extends AsyncTask<Void, Void, Boolean> {
             String id = jsonObj.getString("id_poubelle");
             String longitude = jsonObj.getString("longitude");
             String latitude =  jsonObj.getString("latitude");
+            String titre = jsonObj.getString("titre");
             String commentaire = jsonObj.getString("commentaire");
+            String couleur = jsonObj.getString("couleur");
 
             MarkerOptions marker = new MarkerOptions()
                     .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                     .position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                    .title(commentaire)
+                    .title(titre)
                     .snippet(commentaire)
                     .draggable(true);
 
             mapTrash.put(id,marker);
+            mapTrashColor.put(id,couleur);
         }
 
     }
@@ -107,12 +112,14 @@ public class GetAllTrashTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(final Boolean success) {
         if(success)
         {
-            Log.i("sucess","sucess");
+
             for(Map.Entry<String, MarkerOptions> entry : mapTrash.entrySet()) {
                 String key = entry.getKey();
                 MarkerOptions value = entry.getValue();
 
-                FragmentMap.addFragmentMapMarker(value, FragmentMap.FM_TYPE.GREEN);
+                Log.i("sucess",mapTrashColor.get(key));
+
+                FragmentMap.addFragmentMapMarker(value, FragmentMap.checkFMType(mapTrashColor.get(key)));
             }
         }
     }
