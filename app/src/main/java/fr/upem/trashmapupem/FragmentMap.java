@@ -367,7 +367,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, Locatio
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(48.8392733, 2.5850778), 16));
 
-            Log.i("My location is enabled", "NO");
+        //    Log.i("My location is enabled", "NO");
         //}
         // FIN : uncomment when location is fixed
 
