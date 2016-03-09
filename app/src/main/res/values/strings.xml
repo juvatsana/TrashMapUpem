@@ -25,10 +25,10 @@
     <string name="cancel">Cancel</string>
 
     <string-array name="garbage_colors">
-        <item>GRAY</item>
-        <item>BROWN</item>
-        <item>GREEN</item>
-        <item>YELLOW</item>
+        <item>Gray</item>
+        <item>Brown</item>
+        <item>Green</item>
+        <item>Yellow</item>
     </string-array>
 
 </resources>

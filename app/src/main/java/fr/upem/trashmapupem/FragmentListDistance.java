@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +29,12 @@ import java.util.List;
  */
 public class FragmentListDistance extends Fragment {
 
+    class CustomComparatorData implements Comparator<Data> {
+        @Override
+        public int compare(Data o1, Data o2) {
+            return o1.distance.compareTo(o2.distance);
+        }
+    }
 
     class Data {
         FragmentMap.FM_TYPE type;
@@ -101,7 +109,7 @@ public class FragmentListDistance extends Fragment {
             Data d = new Data(type,String.valueOf(distance)+" km",drawable);
             datas.add(d);
         }
-
+        Collections.sort(datas,new CustomComparatorData());
     }
 
     public static Fragment newInstance(Context context) {
