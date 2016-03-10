@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -112,6 +113,7 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                             tempMarker = themo;
                                         }
                                         themMap.addMarker(tempMarker);
+                                        Log.i("Marker ajouté", String.valueOf(tempMarker.getAnchorU())+":"+String.valueOf(tempMarker.getAnchorV()));
                                     }
                                 })
                                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -155,6 +157,7 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                             thenewgenmarker = themo;
                         }
                         themMap.addMarker(thenewgenmarker);
+                        Log.i("Marker ajouté", thenewgenmarker.toString());
 
                         // Exit and listenning
                         break;

@@ -128,7 +128,8 @@ public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
                                         {
                                             tempMarker = themo;
                                         }
-                                        themMap.addMarker(themo);
+                                        themMap.addMarker(tempMarker);
+                                        Log.i("Marker ajouté", tempMarker.toString());
                                     }
                                 })
                                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -175,7 +176,7 @@ public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
 
                         // At it to the temp map or it will not be render yet ...
                         themMap.addMarker(tempMarker);
-
+                        Log.i("Marker ajouté", tempMarker.toString());
                         // Exit and still listening
                         break;
                 }

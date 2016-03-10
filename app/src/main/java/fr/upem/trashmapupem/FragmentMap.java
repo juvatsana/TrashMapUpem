@@ -69,7 +69,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     private boolean onListenerMain=true;
 
     private GoogleApiClient playServices;
-    private LocationRequest lastLocation;
+    private LocationRequest theLocationRequest;
+    private Location currentLocation;
 
     /**
      * Only use for convert a string to FM_TYPE
@@ -100,6 +101,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                 break;
         }
         return thetype;
+    }
+
+    public Location getCurrentLocation()
+    {
+        return currentLocation;
     }
 
     public static PoubelleMarker getPoubelleMarkerFromMap(String key)
@@ -145,7 +151,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     public static MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,FM_TYPE color)
     {
         if(newMarker == null)  return null;
-
+        newMarker.draggable(false) // Pour pas pouvoir le bouger, on vera autrement si on veut gérer sa
+        .anchor(0.5f, 1.0f) // Ratio de la map pour que l'icone s'affiche bien
+        .flat(false); // Pour que l'icone rotate en même temps que la map
         if(color!=null )
         {
 
@@ -202,7 +210,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                 .addConnectionCallbacks(this)
                 .addApi(LocationServices.API)
                 .build();
-
         return root;
     }
 
@@ -210,8 +217,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     public void onStart()
     {
         playServices.connect();
-        SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        myMAPF.getMapAsync(this); // Call onMapReady
         super.onStart();
     }
 
@@ -222,22 +227,43 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         super.onStop();
     }
 
+    public void initLocationRequest()
+    {
+        theLocationRequest = LocationRequest.create();
+        theLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        theLocationRequest.setInterval(1000); // Update location every second
+    }
+
+    public void initCurrentlocation()
+    {
+        currentLocation = new Location("");
+        currentLocation.setLatitude(48.8392733d);
+        currentLocation.setLongitude(2.5850778d);
+    }
+
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Google API","OK");
-        lastLocation = LocationRequest.create();
-        lastLocation.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        lastLocation.setInterval(1000); // Update location every second
+        initLocationRequest();
+        initCurrentlocation();
         try
         {
             LocationServices.FusedLocationApi.requestLocationUpdates(
-                    playServices, lastLocation, this);
+                    playServices, theLocationRequest, this);
             Location mobileLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
             if (mobileLocation != null) {
-                Log.i("OnConnect Position", mobileLocation.getLatitude()+":"+mobileLocation.getLongitude());
+                currentLocation.setLatitude(mobileLocation.getLatitude());
+                currentLocation.setLongitude(mobileLocation.getLongitude());
+                Toast.makeText(getActivity(), "Hello Mister/Miss !",
+                        Toast.LENGTH_LONG).show();
+                Log.i("OnConnect Position", mobileLocation.getLatitude() + ":" + mobileLocation.getLongitude());
             }
             else
             {
+                AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
+                Toast.makeText(getActivity(), "Your last position is here ...",
+                        Toast.LENGTH_LONG).show();
+
                 Log.i("OnConnect Position","null");
             }
         }
@@ -245,8 +271,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         {
             Log.i("Security on connect","exception");
         }
-
-        }
+        SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        myMAPF.getMapAsync(this); // Call onMapReady
+    }
 
         @Override
     public void onConnectionSuspended(int i) {
@@ -260,7 +287,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i("Location received: ", location.toString());
+        //Log.i("Location received: ", location.toString());
     }
 
     public void showSettingsAlert(){
@@ -305,16 +332,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         mMap = googleMap;
 
         mMap.addMarker(new MarkerOptions()
-                    .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-                    .position(new LatLng(48.838790, 2.585753))
-                    .title("UPEM MLV")
-                    .snippet("University of Marne La Vallée")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman))
-                    .flat(true));
+                .anchor(0.5f, 1.0f)
+                .position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .title("Your here")
+                .snippet("...")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
 
         //Position caméra
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(48.8392733, 2.5850778), 16));
+                new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 16));
 
         // Load application markers
         Iterator it = mapMark.entrySet().iterator();

@@ -140,12 +140,6 @@ public class MainActivity extends AppCompatActivity {
                     fm.setOnListenerDelete(false);
                     fm.setOnListenerAjout(true);
                     fm.setOnListenerMain(false);
-                    /*MarkerOptions test = new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pb))
-                            .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-                            .position(new LatLng(48.838790, 2.585753));
-                    fragment.addFragmentMapMarker(test);*/
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
