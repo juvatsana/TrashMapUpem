@@ -107,14 +107,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showFragment(Fragment fragment)
+    public boolean showFragment(Fragment fragment)
     {
+        if(fragment==null)return false;
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.onStart();
         fragmentManager.beginTransaction().show(fragment).commit();
 
         // Assure that the transaction is made.
         fragmentManager.executePendingTransactions();
+        return true;
+    }
+
+    public boolean showFragmentMap(FragmentMap fragment,FragmentMap.FM_CONFIG config)
+    {
+        if(fragment==null)return false;
+        fragment.loadConfig(config);
+        showFragment(fragment);
+        return true;
     }
 
     public void loadFragmentMap(FragmentMap.FM_CONFIG config)
@@ -122,12 +132,7 @@ public class MainActivity extends AppCompatActivity {
         hideFragment(TAG_LIST);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentMap testFragmentMap = (FragmentMap)fragmentManager.findFragmentByTag(TAG_MAP);
-        if(testFragmentMap!=null)
-        {
-            testFragmentMap.loadConfig(config);
-            showFragment(testFragmentMap);
-            return;
-        }
+        if(showFragmentMap(testFragmentMap,config))return;
         Fragment fragment = FragmentMap.newInstance(this);
         fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_MAP).commit();
 
@@ -141,11 +146,7 @@ public class MainActivity extends AppCompatActivity {
         hideFragment(TAG_MAP);
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment testFragmentList = fragmentManager.findFragmentByTag(TAG_LIST);
-        if(testFragmentList!=null)
-        {
-            showFragment(testFragmentList);
-            return;
-        }
+        if(showFragment(testFragmentList))return;
         Fragment fragment = FragmentListDistance.newInstance(this);
         fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_LIST).commit();
 
