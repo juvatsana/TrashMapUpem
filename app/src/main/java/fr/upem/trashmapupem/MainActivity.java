@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void prepareFragmentMap()
+    public void hideFragment(String tag)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment testFragmentList=fragmentManager.findFragmentByTag(TAG_LIST);
+        Fragment testFragmentList=fragmentManager.findFragmentByTag(tag);
         if(testFragmentList!=null)
         {
-            Log.i("prepareFragmentMap","testFragmentList : NOT NULL");
+            Log.i("test Fragment",tag+" : NOT NULL");
             fragmentManager.beginTransaction().hide(testFragmentList).commit();
 
             // Assure that the transaction is made.
@@ -103,40 +103,29 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            Log.i("prepareFragmentMap","testFragmentList : NULL");
+            Log.i("test Fragment",tag+" : NULL");
         }
     }
 
-    public void prepareFragmentList()
+    public void showFragment(Fragment fragment)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment testFragmentMap=fragmentManager.findFragmentByTag(TAG_MAP);
-        if(testFragmentMap!=null)
-        {
-            Log.i("prepareFragmentList","testFragmentList : NOT NULL");
-            fragmentManager.beginTransaction().hide(testFragmentMap).commit();
+        fragment.onStart();
+        fragmentManager.beginTransaction().show(fragment).commit();
 
-            // Assure that the transaction is made.
-            fragmentManager.executePendingTransactions();
-        }
-        else
-        {
-            Log.i("prepareFragmentList","testFragmentList : NULL");
-        }
+        // Assure that the transaction is made.
+        fragmentManager.executePendingTransactions();
     }
 
     public void loadFragmentMap(FragmentMap.FM_CONFIG config)
     {
+        hideFragment(TAG_LIST);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentMap testFragmentMap = (FragmentMap)fragmentManager.findFragmentByTag(TAG_MAP);
         if(testFragmentMap!=null)
         {
             testFragmentMap.loadConfig(config);
-            testFragmentMap.onStart();
-            fragmentManager.beginTransaction().show(testFragmentMap).commit();
-
-            // Assure that the transaction is made.
-            fragmentManager.executePendingTransactions();
+            showFragment(testFragmentMap);
             return;
         }
         Fragment fragment = FragmentMap.newInstance(this);
@@ -149,15 +138,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadFragmentList()
     {
+        hideFragment(TAG_MAP);
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment testFragmentList = fragmentManager.findFragmentByTag(TAG_LIST);
         if(testFragmentList!=null)
         {
-            testFragmentList.onStart();
-            fragmentManager.beginTransaction().show(testFragmentList).commit();
-
-            // Assure that the transaction is made.
-            fragmentManager.executePendingTransactions();
+            showFragment(testFragmentList);
             return;
         }
         Fragment fragment = FragmentListDistance.newInstance(this);
@@ -177,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in list");
                 fragmentClass = FragmentMap.class;
                 try {
-                    prepareFragmentList();
                     loadFragmentList();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -187,8 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in map");
                 fragmentClass = FragmentMap.class;
                 try {
-                    prepareFragmentMap();
-                    //fragment.loadConfig(FragmentMap.FM_CONFIG.MAP);
                     loadFragmentMap(FragmentMap.FM_CONFIG.MAP);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -198,8 +181,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in delete");
                 fragmentClass = FragmentMap.class;
                 try {
-                    prepareFragmentMap();
-                    //fragment.loadConfig(FragmentMap.FM_CONFIG.DELETE);
                     loadFragmentMap(FragmentMap.FM_CONFIG.DELETE);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -209,8 +190,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono", "in add");
                 fragmentClass = FragmentMap.class;
                 try {
-                    prepareFragmentMap();
-                    //fragment.loadConfig(FragmentMap.FM_CONFIG.ADD);
                     loadFragmentMap(FragmentMap.FM_CONFIG.ADD);
                 } catch (Exception e) {
                     e.printStackTrace();
