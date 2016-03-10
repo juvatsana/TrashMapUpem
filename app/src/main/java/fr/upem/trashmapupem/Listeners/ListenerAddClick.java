@@ -70,19 +70,15 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                         // Recup string of EditTexts
                                         String stringETname = ETname.getText().toString();
                                         String stringETcomment = ETcomment.getText().toString();
+                                        String toastMessage= "Mark added. Thanks you.";
 
                                         // init
                                         MarkerOptions themo = new MarkerOptions().position(point);
                                         FragmentMap.FM_TYPE thetype = FragmentMap.FM_TYPE.GRAY;
 
                                         if ((stringETname.compareTo("") == 0) && (stringETcomment.compareTo("") == 0)) {
-                                            // Render a message/toast
-                                            Toast.makeText(fragmentActivity, "Mark added but no description. Thanks you.",
-                                                    Toast.LENGTH_LONG).show();
-                                                        /*
-                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                                        builderYes.setMessage("Mark added but no description. Thanks you.").show();
-                                                        */
+                                            toastMessage= "Mark added but no description. Thanks you.";
+
                                         } else {
                                             if (stringETname.compareTo("") != 0) {
                                                 themo.title(stringETname);
@@ -90,14 +86,15 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                             if (stringETcomment.compareTo("") != 0) {
                                                 themo.snippet(stringETcomment);
                                             }
-                                            // Render a message/toast
-                                            Toast.makeText(fragmentActivity, "Mark added. Thanks you.",
-                                                    Toast.LENGTH_LONG).show();
-                                                        /*
-                                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
-                                                        builderYes.setMessage("Mark added. Thanks you.").show();
-                                                        */
                                         }
+                                        // Render a message/toast
+                                        Toast.makeText(fragmentActivity, toastMessage,
+                                                Toast.LENGTH_LONG).show();
+                                         /*
+                                        AlertDialog.Builder builderYes = new AlertDialog.Builder(getContext());
+                                        builderYes.setMessage(toastMessage).show();
+                                        */
+
                                         // Take the good color here
                                         thetype = FragmentMap.checkFMType(textSpinner);
 
@@ -113,7 +110,6 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                                             tempMarker = themo;
                                         }
                                         themMap.addMarker(tempMarker);
-                                        Log.i("Marker ajouté", String.valueOf(tempMarker.getAnchorU())+":"+String.valueOf(tempMarker.getAnchorV()));
                                     }
                                 })
                                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -157,7 +153,6 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                             thenewgenmarker = themo;
                         }
                         themMap.addMarker(thenewgenmarker);
-                        Log.i("Marker ajouté", thenewgenmarker.toString());
 
                         // Exit and listenning
                         break;
@@ -221,8 +216,6 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
                 }
             }
         };
-
-        android.util.Log.i("onMapClick", "MapClickAdd baby!");
 
         // Render a message
         AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);

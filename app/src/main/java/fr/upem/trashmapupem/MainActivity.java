@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.Fragment.SavedState;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
 
     private GetAllTrashTask getTrashTask = null;
+    final static String TAG_MAP="FRAGMENT_PMAP";
+    final static String TAG_LIST="FRAGMENT_PLIST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
         }
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_MAP).commit();
 
         // Assure that the transaction is made.
-        getSupportFragmentManager().executePendingTransactions();
+        fragmentManager.executePendingTransactions();
 
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,18 +89,96 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    public void prepareFragmentMap()
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment testFragmentList=fragmentManager.findFragmentByTag(TAG_LIST);
+        if(testFragmentList!=null)
+        {
+            Log.i("prepareFragmentMap","testFragmentList : NOT NULL");
+            fragmentManager.beginTransaction().hide(testFragmentList).commit();
+
+            // Assure that the transaction is made.
+            fragmentManager.executePendingTransactions();
+        }
+        else
+        {
+            Log.i("prepareFragmentMap","testFragmentList : NULL");
+        }
+    }
+
+    public void prepareFragmentList()
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment testFragmentMap=fragmentManager.findFragmentByTag(TAG_MAP);
+        if(testFragmentMap!=null)
+        {
+            Log.i("prepareFragmentList","testFragmentList : NOT NULL");
+            fragmentManager.beginTransaction().hide(testFragmentMap).commit();
+
+            // Assure that the transaction is made.
+            fragmentManager.executePendingTransactions();
+        }
+        else
+        {
+            Log.i("prepareFragmentList","testFragmentList : NULL");
+        }
+    }
+
+    public void loadFragmentMap(FragmentMap.FM_CONFIG config)
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentMap testFragmentMap = (FragmentMap)fragmentManager.findFragmentByTag(TAG_MAP);
+        if(testFragmentMap!=null)
+        {
+            testFragmentMap.loadConfig(config);
+            testFragmentMap.onStart();
+            fragmentManager.beginTransaction().show(testFragmentMap).commit();
+
+            // Assure that the transaction is made.
+            fragmentManager.executePendingTransactions();
+            return;
+        }
+        Fragment fragment = FragmentMap.newInstance(this);
+        fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_MAP).commit();
+
+        // Assure that the transaction is made.
+        fragmentManager.executePendingTransactions();
+        Log.i("loadFragmentMap", "added");
+    }
+
+    public void loadFragmentList()
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment testFragmentList = fragmentManager.findFragmentByTag(TAG_LIST);
+        if(testFragmentList!=null)
+        {
+            testFragmentList.onStart();
+            fragmentManager.beginTransaction().show(testFragmentList).commit();
+
+            // Assure that the transaction is made.
+            fragmentManager.executePendingTransactions();
+            return;
+        }
+        Fragment fragment = FragmentListDistance.newInstance(this);
+        fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_LIST).commit();
+
+        // Assure that the transaction is made.
+        fragmentManager.executePendingTransactions();
+        Log.i("loadFragmentList","added");
+    }
 
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on
         // position
-        Fragment fragment = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.nav_list:
                 Log.i("nonono","in list");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = FragmentListDistance.newInstance(this);
+                    prepareFragmentList();
+                    loadFragmentList();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -106,11 +187,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in map");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = FragmentMap.newInstance(this);
-                    FragmentMap fm = (FragmentMap) fragment;
-                    fm.setOnListenerDelete(false);
-                    fm.setOnListenerAjout(false);
-                    fm.setOnListenerMain(true);
+                    prepareFragmentMap();
+                    //fragment.loadConfig(FragmentMap.FM_CONFIG.MAP);
+                    loadFragmentMap(FragmentMap.FM_CONFIG.MAP);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -119,47 +198,28 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("nonono","in delete");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = FragmentMap.newInstance(this);
-                    FragmentMap fm = (FragmentMap) fragment;
-                    fm.setOnListenerDelete(true);
-                    fm.setOnListenerAjout(false);
-                    fm.setOnListenerMain(false);
+                    prepareFragmentMap();
+                    //fragment.loadConfig(FragmentMap.FM_CONFIG.DELETE);
+                    loadFragmentMap(FragmentMap.FM_CONFIG.DELETE);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                // Render a message
-                new AlertDialog.Builder(this)
-                        .setMessage("Click and press yes for delete marker").show();
                 break;
             case R.id.nav_add_trash:
                 Log.i("nonono", "in add");
                 fragmentClass = FragmentMap.class;
                 try {
-                    fragment = FragmentMap.newInstance(this);
-                    FragmentMap fm = (FragmentMap) fragment;
-                    fm.setOnListenerDelete(false);
-                    fm.setOnListenerAjout(true);
-                    fm.setOnListenerMain(false);
+                    prepareFragmentMap();
+                    //fragment.loadConfig(FragmentMap.FM_CONFIG.ADD);
+                    loadFragmentMap(FragmentMap.FM_CONFIG.ADD);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                // Render a message
-                new AlertDialog.Builder(this)
-                        .setMessage("Click and press yes for add marker").show();
                 break;
             default:
-                Log.i("nonono","on default");
+                Log.i("nonono", "on default");
                 fragmentClass = FragmentMap.class;
         }
-
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        // Assure that the transaction is made.
-        getSupportFragmentManager().executePendingTransactions();
 
         // Highlight the selected item, update the title, and close the drawer
         // Highlight the selected item has been done by NavigationView

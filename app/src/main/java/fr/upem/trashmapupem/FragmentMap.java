@@ -61,6 +61,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
+    public enum FM_CONFIG {ADD,DELETE,MAP}
 
     private GoogleMap mMap;
     private static HashMap<String,PoubelleMarker> mapMark = new HashMap<String,PoubelleMarker>();
@@ -70,7 +71,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
     private GoogleApiClient playServices;
     private LocationRequest theLocationRequest;
+
     private Location currentLocation;
+    private Marker currentMarker;
+
+    private boolean firstStart=true;
 
     /**
      * Only use for convert a string to FM_TYPE
@@ -101,11 +106,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                 break;
         }
         return thetype;
-    }
-
-    public Location getCurrentLocation()
-    {
-        return currentLocation;
     }
 
     public static PoubelleMarker getPoubelleMarkerFromMap(String key)
@@ -216,13 +216,23 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     @Override
     public void onStart()
     {
-        playServices.connect();
+        Log.i("onStart", "yes");
         super.onStart();
+        if(playServices.isConnected())
+        {
+            Log.i("onStart","alreadyConnected");
+            // Don't move it
+            SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            myMAPF.getMapAsync(this); // Call onMapReady
+            return;
+        }
+        playServices.connect();
     }
 
     @Override
     public void onStop()
     {
+        Log.i("onStop","yes");
         playServices.disconnect();
         super.onStop();
     }
@@ -241,53 +251,125 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         currentLocation.setLongitude(2.5850778d);
     }
 
+    public void loadCurrentLocation()
+    {
+        if(currentLocation==null)
+        {
+            initCurrentlocation();
+        }
+    }
+
+    public void loadLastLocation()
+    {
+        Location mobileLocation = null;
+        if(playServices.isConnected())
+        {
+            try
+            {
+                initLocationRequest();
+                LocationServices.FusedLocationApi.requestLocationUpdates(playServices, theLocationRequest, this);
+                mobileLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
+                if (mobileLocation != null) {
+                    currentLocation = new Location("");
+                    currentLocation.setLatitude(mobileLocation.getLatitude());
+                    currentLocation.setLongitude(mobileLocation.getLongitude());
+                    Log.i("lastLocation Position", mobileLocation.getLatitude() + ":" + mobileLocation.getLongitude());
+                }
+            }
+            catch(SecurityException se)
+            {
+                Log.i("Security on connect","exception");
+            }
+        }
+        if(mobileLocation == null)
+        {
+            Log.i("OnConnect Position", "use position by default");
+            loadCurrentLocation();
+            if(firstStart)
+            {
+                showSettingsAlert();
+            }
+        }
+    }
+
+    public void loadCurrentMarker()
+    {
+        if(currentMarker!=null)
+        {
+            currentMarker.remove();
+        }
+        currentMarker = mMap.addMarker(new MarkerOptions()
+                    .anchor(0.5f, 1.0f)
+                    .position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                    .title("Your here")
+                    .snippet("...")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
+    }
+
+    public void loadApplicationMarkers()
+    {
+        if(firstStart)
+        {
+            Iterator it = mapMark.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                PoubelleMarker PM = (PoubelleMarker)pair.getValue();
+                mMap.addMarker(PM.getMarkerOptions());
+            }
+            firstStart=false;
+        }
+
+    }
+
+    public void loadConfig(FM_CONFIG config)
+    {
+        if(config==null)
+        {
+            return;
+        }
+        switch(config)
+        {
+            case ADD:
+                onListenerDelete = false;
+                onListenerAjout = true;
+                onListenerMain = false;
+                break;
+            case DELETE:
+                onListenerDelete = true;
+                onListenerAjout = false;
+                onListenerMain = false;
+                break;
+            case MAP:
+                onListenerDelete = false;
+                onListenerAjout = false;
+                onListenerMain = true;
+                break;
+        }
+    }
+
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.i("Google API","OK");
-        initLocationRequest();
-        initCurrentlocation();
-        try
-        {
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    playServices, theLocationRequest, this);
-            Location mobileLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
-            if (mobileLocation != null) {
-                currentLocation.setLatitude(mobileLocation.getLatitude());
-                currentLocation.setLongitude(mobileLocation.getLongitude());
-                Toast.makeText(getActivity(), "Hello Mister/Miss !",
-                        Toast.LENGTH_LONG).show();
-                Log.i("OnConnect Position", mobileLocation.getLatitude() + ":" + mobileLocation.getLongitude());
-            }
-            else
-            {
-                AlertDialog.Builder builderNo = new AlertDialog.Builder(getContext());
-                Toast.makeText(getActivity(), "Your last position is here ...",
-                        Toast.LENGTH_LONG).show();
+        Log.i("Google API", "OK");
+        loadLastLocation();
 
-                Log.i("OnConnect Position","null");
-            }
-        }
-        catch(SecurityException se)
-        {
-            Log.i("Security on connect","exception");
-        }
+        // Don't move it
         SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         myMAPF.getMapAsync(this); // Call onMapReady
     }
 
-        @Override
+     @Override
     public void onConnectionSuspended(int i) {
         Log.d("Connection suspended", "Connection suspended");
-        }
+    }
 
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d("Connection failed", "Connection failed");
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        //Log.i("Location received: ", location.toString());
+        Log.i("Location received: ", location.toString());
     }
 
     public void showSettingsAlert(){
@@ -331,25 +413,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
         mMap = googleMap;
 
-        mMap.addMarker(new MarkerOptions()
-                .anchor(0.5f, 1.0f)
-                .position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
-                .title("Your here")
-                .snippet("...")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
+        loadCurrentMarker();
 
-        //Position caméra
+        //Position caméra on currentMarker
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 16));
+                new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 16));
 
-        // Load application markers
-        Iterator it = mapMark.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            PoubelleMarker PM = (PoubelleMarker)pair.getValue();
-            mMap.addMarker(PM.getMarkerOptions());
-        }
+        loadApplicationMarkers();
 
+        // Custom info windows
         mMap.setInfoWindowAdapter(new ListenerInfoWindow(getActivity(),getContext(),mMap));
 
         // Check for Main activity
