@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -200,18 +201,20 @@ public class LoginActivity extends AppCompatActivity{
 
         private final String mEmail;
         private final String mPassword;
-        private ProgressDialog prodDailog = new ProgressDialog(LoginActivity.this);
+        private ProgressDialog prodDialog;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
-            prodDailog.setMessage("Looking for you login ...");
-            prodDailog.setTitle("Please wait");
-            prodDailog.setIndeterminate(false);
-            prodDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            prodDailog.setCancelable(true);
-            prodDailog.setIndeterminateDrawable(ContextCompat.getDrawable(prodDailog.getContext(),R.drawable.dialogtheme));
-            prodDailog.show();
+            prodDialog= new ProgressDialog(LoginActivity.this);
+            prodDialog.setMessage("Looking for your login ...");
+            prodDialog.setTitle("Please wait");
+            prodDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            prodDialog.setIndeterminate(true);
+            prodDialog.setIndeterminateDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.dialogtheme));
+            prodDialog.setCancelable(true);
+            prodDialog.getWindow().setGravity(Gravity.CENTER_VERTICAL);
+            prodDialog.show();
         }
 
         @Override
@@ -276,7 +279,7 @@ public class LoginActivity extends AppCompatActivity{
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
-            prodDailog.hide();
+            prodDialog.hide();
         }
 
         @Override

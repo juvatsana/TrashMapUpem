@@ -293,13 +293,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
-    public void loadCurrentMarker()
+    public void loadCurrentMarker(GoogleMap googleMap)
     {
         if(currentMarker!=null)
         {
             currentMarker.remove();
         }
-        currentMarker = mMap.addMarker(new MarkerOptions()
+        currentMarker = googleMap.addMarker(new MarkerOptions()
                     .anchor(0.5f, 1.0f)
                     .position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
                     .title("Your here")
@@ -307,7 +307,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
     }
 
-    public void loadApplicationMarkers()
+    public void loadApplicationMarkers(GoogleMap googleMap)
     {
         if(firstStart)
         {
@@ -315,7 +315,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 PoubelleMarker PM = (PoubelleMarker)pair.getValue();
-                mMap.addMarker(PM.getMarkerOptions());
+                googleMap.addMarker(PM.getMarkerOptions());
             }
             firstStart=false;
         }
@@ -348,6 +348,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    public void initListeners(GoogleMap googleMap)
+    {
+        googleMap.setOnMapLongClickListener(null);
+        googleMap.setOnMarkerClickListener(null);
+        googleMap.setOnMapClickListener(null);
+    }
+
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Google API", "OK");
@@ -377,7 +384,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
         // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("GPS settings");
 
         // Setting Dialog Message
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
@@ -414,13 +421,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
         mMap = googleMap;
 
-        loadCurrentMarker();
+        initListeners(mMap);
+        loadCurrentMarker(mMap);
 
         //Position caméra on currentMarker
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 16));
 
-        loadApplicationMarkers();
+        loadApplicationMarkers(mMap);
 
         // Custom info windows
         mMap.setInfoWindowAdapter(new ListenerInfoWindow(getActivity(),getContext(),mMap));

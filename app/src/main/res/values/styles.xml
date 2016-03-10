@@ -5,11 +5,15 @@
         <item name="colorPrimary">#009688</item>
         <item name="colorPrimaryDark">#00796B</item>
         <item name="colorAccent">#FFC107</item>
-        <item name="android:alertDialogTheme">@style/SecondDialogTheme</item>
+        <!--<item name="android:alertDialogTheme">@style/SecondDialogTheme</item>-->
     </style>
 
-    <style name="SecondDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+    <style name="SecondDialogTheme">
         <item name="@android:background">@color/colorBlanc</item>
         <item name="@android:textColor">@color/colorAccent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_centerInParent">true</item>
     </style>
 </resources>
