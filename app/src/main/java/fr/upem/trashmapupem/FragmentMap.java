@@ -221,6 +221,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         if(playServices.isConnected())
         {
             Log.i("onStart","alreadyConnected");
+            loadLastLocation();
             // Don't move it
             SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
             myMAPF.getMapAsync(this); // Call onMapReady
