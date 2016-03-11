@@ -78,6 +78,6 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
         addCircleAtPosition(marker.getPosition().latitude,marker.getPosition().longitude);
 
         // Exit and listening
-        return true;
+        return false; // false for use super onMarkerClick (display the infowindow),otherwise true
     }
 }

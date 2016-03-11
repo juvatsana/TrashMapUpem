@@ -421,7 +421,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
         mMap = googleMap;
 
-        //initListeners(googleMap);
+        initListeners(googleMap);
         loadCurrentMarker(googleMap);
 
         //Position caméra on currentMarker
