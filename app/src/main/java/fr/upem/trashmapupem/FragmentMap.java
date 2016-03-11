@@ -28,6 +28,8 @@ import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -289,6 +291,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
             if(firstStart)
             {
                 showSettingsAlert();
+                firstStart=false;
             }
         }
     }
@@ -299,27 +302,22 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         {
             currentMarker.remove();
         }
+        LatLng ll = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         currentMarker = googleMap.addMarker(new MarkerOptions()
                     .anchor(0.5f, 1.0f)
-                    .position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                    .position(ll)
                     .title("Your here")
                     .snippet("...")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
     }
-
     public void loadApplicationMarkers(GoogleMap googleMap)
     {
-        if(firstStart)
-        {
-            Iterator it = mapMark.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                PoubelleMarker PM = (PoubelleMarker)pair.getValue();
-                googleMap.addMarker(PM.getMarkerOptions());
-            }
-            firstStart=false;
+        Iterator it = mapMark.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            PoubelleMarker PM = (PoubelleMarker)pair.getValue();
+            googleMap.addMarker(PM.getMarkerOptions());
         }
-
     }
 
     public void loadConfig(FM_CONFIG config)
@@ -419,35 +417,41 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
         */
 
+        googleMap.clear();
+
         mMap = googleMap;
 
-        initListeners(mMap);
-        loadCurrentMarker(mMap);
+        //initListeners(googleMap);
+        loadCurrentMarker(googleMap);
 
         //Position caméra on currentMarker
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 16));
 
-        loadApplicationMarkers(mMap);
+        loadApplicationMarkers(googleMap);
+
+        // START Start listeners or others customs things for map
+        // Custom marker click
+        googleMap.setOnMarkerClickListener(new ListenerMarkerClick(getActivity(), getContext(), googleMap));
 
         // Custom info windows
-        mMap.setInfoWindowAdapter(new ListenerInfoWindow(getActivity(),getContext(),mMap));
+        googleMap.setInfoWindowAdapter(new ListenerInfoWindow(getActivity(),getContext(),googleMap));
 
         // Check for Main activity
         if(isOnListenerMain())
         {
-            mMap.setOnMapLongClickListener(new ListenerMainLongClick(getActivity(),getContext(),mMap));
+            googleMap.setOnMapLongClickListener(new ListenerMainLongClick(getActivity(),getContext(),googleMap));
         }
 
         // Check if DELETE Fragment
         if(isOnListenerDelete())
         {
-            mMap.setOnMarkerClickListener(new ListenerDeleteMarkerClick(getActivity(),getContext(),mMap));
+            googleMap.setOnMarkerClickListener(new ListenerDeleteMarkerClick(getActivity(),getContext(),googleMap));
         }
 
         // Check if AJOUT Fragment
         if(isOnListenerAjout()) {
-            mMap.setOnMapClickListener(new ListenerAddClick(getActivity(),getContext(),mMap));
+            googleMap.setOnMapClickListener(new ListenerAddClick(getActivity(),getContext(),googleMap));
         }
     }
 
@@ -455,24 +459,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return onListenerAjout;
     }
 
-    public void setOnListenerAjout(boolean onListenerAjout) {
-        this.onListenerAjout = onListenerAjout;
-    }
-
     public boolean isOnListenerDelete() {
         return onListenerDelete;
     }
 
-    public void setOnListenerDelete(boolean onListenerDelete) {
-        this.onListenerDelete = onListenerDelete;
-    }
-
     public boolean isOnListenerMain() {
         return onListenerMain;
-    }
-
-    public void setOnListenerMain(boolean onListenerMain) {
-        this.onListenerMain = onListenerMain;
     }
 }
 
