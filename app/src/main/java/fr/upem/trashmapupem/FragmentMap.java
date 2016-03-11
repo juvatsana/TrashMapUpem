@@ -50,6 +50,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return currentLocation;
     }
 
+    public void setCurrentLocation(Location location) { this.currentLocation = currentLocation;}
+
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
     public enum FM_CONFIG {ADD,DELETE,MAP}
 
@@ -408,6 +410,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
         // Showing Alert Message
         alertDialog.show();
+    }
+    @Override
+    public void onDestroy()
+    {
+        Log.i("onDestroy","Yes");
+        super.onDestroy();
     }
 
     @Override

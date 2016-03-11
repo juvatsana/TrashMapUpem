@@ -1,5 +1,6 @@
 package fr.upem.trashmapupem;
 
+import android.content.DialogInterface;
 import android.location.Location;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -37,15 +38,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Location location = new Location("");
+        location.setLatitude(48.8392733d);
+        location.setLongitude(2.5850778d);
+        if(savedInstanceState!=null)
+        {
+            double MyLatitude = savedInstanceState.getDouble("MyLatitude");
+            double MyLongitude = savedInstanceState.getDouble("MyLongitude");
+            if((Double.compare(MyLatitude,0.0d)!=0)&&(Double.compare(MyLongitude,0.0d)!=0))
+            {
+                location.setLatitude(MyLatitude);
+                location.setLongitude(MyLongitude);
+                Log.i("OnCreate Main saves","Good values");
+            }
+            Log.e("OnCreate Main saves","Bad/No values");
+        }
+        else
+        {
+            Log.e("OnCreate Main saves","savedInstanceState not on");
+        }
         setContentView(R.layout.activity_drawer);
 
-        Fragment fragment = null;
+        FragmentMap fragment = null;
         Class fragmentClass;
         fragmentClass = FragmentMap.class;
         try {
-            fragment = (Fragment) FragmentMap.newInstance(this);
+            fragment = (FragmentMap) FragmentMap.newInstance(this);
+            //fragment.setCurrentLocation(location);
 
-            Log.e("LaunchTask", "Ok");
+            Log.i("LaunchTask", "Ok");
 
             getTrashTask = new GetAllTrashTask();
             getTrashTask.execute();
@@ -78,6 +99,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i("onSaveInstanceState","Location saved.");
+        Location currentLocation = loadLastLocationFromFragmentMap();
+
+        if(currentLocation==null)return;
+
+        savedInstanceState.putDouble("MyLatitude", currentLocation.getLatitude());
+        savedInstanceState.putDouble("MyLongitude", currentLocation.getLongitude());
+    }
+
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
@@ -88,6 +121,20 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        MainActivity.super.onBackPressed();
+                    }
+                }).create().show();
     }
 
     public void hideFragment(String tag)
