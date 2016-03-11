@@ -149,7 +149,7 @@ public class FragmentListDistance extends Fragment {
         return f;
     }
 
-    public double CalculationByDistance(LatLng StartP, LatLng EndP) {
+    public static double CalculationByDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371;// radius of earth in Km
         double lat1 = StartP.latitude;
         double lat2 = EndP.latitude;

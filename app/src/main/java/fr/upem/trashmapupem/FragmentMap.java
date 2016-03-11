@@ -242,12 +242,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         getCurrentLocation().setLongitude(2.5850778d);
     }
 
-    public void loadCurrentLocation()
+    public boolean comparatorDistanceWithMinimum(Location location,Location location2,Double distanceMin)
     {
-        if(getCurrentLocation() ==null)
+        LatLng latLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng latLocation2= new LatLng(location2.getLatitude(),location2.getLongitude());
+        Double thedistance = FragmentListDistance.CalculationByDistance(latLocation,latLocation2);
+        if(thedistance>distanceMin)
         {
-            initCurrentlocation();
+            return true;
         }
+        return false;
     }
 
     public void loadLastLocation()
@@ -275,7 +279,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         if(mobileLocation == null)
         {
             Log.i("OnConnect Position", "use position by default");
-            loadCurrentLocation();
+            if(getCurrentLocation() ==null)
+            {
+                initCurrentlocation();
+            }
             if(firstStart)
             {
                 showSettingsAlert();
@@ -363,6 +370,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
     @Override
     public void onLocationChanged(Location location) {
+        if(currentLocation==null)return;
+        if(mMap==null)return;
+        if(comparatorDistanceWithMinimum(location,currentLocation,0.3d))
+        {
+            currentLocation=location;
+            loadCurrentMarker(mMap);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 16));
+        }
         Log.i("Location received: ", location.toString());
     }
 
