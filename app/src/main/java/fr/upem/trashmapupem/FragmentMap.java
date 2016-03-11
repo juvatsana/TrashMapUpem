@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -13,54 +12,43 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.provider.Settings;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 
-import com.google.android.gms.drive.*;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadFactory;
 
 import fr.upem.trashmapupem.Listeners.*;
-import fr.upem.trashmapupem.Task.GetAllTrashTask;
 
 /**
  * Created by Mourougan on 05/03/2016.
  */
 public class FragmentMap extends Fragment implements OnMapReadyCallback,ConnectionCallbacks,OnConnectionFailedListener,LocationListener {
 
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
     public enum FM_CONFIG {ADD,DELETE,MAP}
@@ -250,13 +238,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     public void initCurrentlocation()
     {
         currentLocation = new Location("");
-        currentLocation.setLatitude(48.8392733d);
-        currentLocation.setLongitude(2.5850778d);
+        getCurrentLocation().setLatitude(48.8392733d);
+        getCurrentLocation().setLongitude(2.5850778d);
     }
 
     public void loadCurrentLocation()
     {
-        if(currentLocation==null)
+        if(getCurrentLocation() ==null)
         {
             initCurrentlocation();
         }
@@ -274,8 +262,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                 mobileLocation = LocationServices.FusedLocationApi.getLastLocation(playServices);
                 if (mobileLocation != null) {
                     currentLocation = new Location("");
-                    currentLocation.setLatitude(mobileLocation.getLatitude());
-                    currentLocation.setLongitude(mobileLocation.getLongitude());
+                    getCurrentLocation().setLatitude(mobileLocation.getLatitude());
+                    getCurrentLocation().setLongitude(mobileLocation.getLongitude());
                     Log.i("lastLocation Position", mobileLocation.getLatitude() + ":" + mobileLocation.getLongitude());
                 }
             }
@@ -302,7 +290,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         {
             currentMarker.remove();
         }
-        LatLng ll = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        LatLng ll = new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude());
         currentMarker = googleMap.addMarker(new MarkerOptions()
                     .anchor(0.5f, 1.0f)
                     .position(ll)

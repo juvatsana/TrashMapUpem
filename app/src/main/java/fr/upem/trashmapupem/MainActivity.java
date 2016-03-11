@@ -1,5 +1,6 @@
 package fr.upem.trashmapupem;
 
+import android.location.Location;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -127,6 +128,26 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public Location loadLastLocationFromFragmentMap()
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentMap theFragmentMap = (FragmentMap)fragmentManager.findFragmentByTag(TAG_MAP);
+        Location locationDefault = new Location("");
+        locationDefault.setLatitude(48.8392733d);
+        locationDefault.setLongitude(2.5850778d);
+        if(theFragmentMap==null)
+        {
+            return locationDefault;
+        }
+        Location testLocation = theFragmentMap.getCurrentLocation();
+        if(testLocation==null)
+        {
+            return locationDefault;
+        }
+        return testLocation;
+    }
+
+
     public void loadFragmentMap(FragmentMap.FM_CONFIG config)
     {
         hideFragment(TAG_LIST);
@@ -143,11 +164,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadFragmentList()
     {
+        Location thelocation = loadLastLocationFromFragmentMap();
         hideFragment(TAG_MAP);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment testFragmentList = fragmentManager.findFragmentByTag(TAG_LIST);
-        if(showFragment(testFragmentList))return;
-        Fragment fragment = FragmentListDistance.newInstance(this);
+        FragmentListDistance testFragmentList = (FragmentListDistance)fragmentManager.findFragmentByTag(TAG_LIST);
+        if(testFragmentList!=null)
+        {
+            testFragmentList.setCurrentLocation(thelocation);
+            showFragment(testFragmentList);
+            return;
+        }
+        Fragment fragment = FragmentListDistance.newInstance(this,thelocation);
         fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_LIST).commit();
 
         // Assure that the transaction is made.

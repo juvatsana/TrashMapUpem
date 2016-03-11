@@ -99,8 +99,6 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
             }
         };
 
-        // Starte die Navigation mit Google Maps, sobald der Marker gedrckt wird
-
         // Render a message
         AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
         builder.setMessage("Do you really want to delete this mark ?").setPositiveButton("Yes", dialogClickListenerDeleteMark)

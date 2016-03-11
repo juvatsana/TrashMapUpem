@@ -1,6 +1,7 @@
 package fr.upem.trashmapupem;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,9 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -29,19 +28,24 @@ import java.util.List;
  */
 public class FragmentListDistance extends Fragment {
 
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
     class CustomComparatorData implements Comparator<Data> {
         @Override
         public int compare(Data o1, Data o2) {
-            return o1.distance.compareTo(o2.distance);
+
+            return Double.compare(o1.distance,o2.distance);
         }
     }
 
     class Data {
         FragmentMap.FM_TYPE type;
-        String distance;
+        double distance;
         int photoPb;
 
-        Data(FragmentMap.FM_TYPE type, String distance, int photoPb) {
+        Data(FragmentMap.FM_TYPE type, double distance, int photoPb) {
             this.type = type;
             this.distance = distance;
             this.photoPb = photoPb;
@@ -50,6 +54,7 @@ public class FragmentListDistance extends Fragment {
 
     private List<Data> datas = new ArrayList<>();
     private RecyclerView rv;
+    private Location currentLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -70,16 +75,42 @@ public class FragmentListDistance extends Fragment {
         rv.setLayoutManager(layoutManager);
         rv.setItemAnimator(new DefaultItemAnimator());
 
+        if(currentLocation==null)
+        {
+            currentLocation = new Location("");
+            currentLocation.setLatitude(48.838790d);
+            currentLocation.setLongitude(2.585753d);
+        }
+/*
         final List<PoubelleMarker> thelist = FragmentMap.getPosOfMapMark();
         calculListPos(thelist);
         Log.i("OnCreateView","before adapter");
         RVAdapter adapter = new RVAdapter(datas);
-        rv.setAdapter(adapter);
+        rv.setAdapter(adapter);*/
         return root;
+    }
+
+    @Override
+    public void onStart()
+    {
+        Log.i("FragmentListDistance","onStart");
+        super.onStart();
+        final List<PoubelleMarker> thelist = FragmentMap.getPosOfMapMark();
+        calculListPos(thelist);
+        RVAdapter adapter = new RVAdapter(datas);
+        rv.setAdapter(adapter);
+    }
+
+    @Override
+    public void onStop()
+    {
+        Log.i("FragmentListDistance","onStop");
+        super.onStop();
     }
 
     public void calculListPos(List<PoubelleMarker> listpm)
     {
+        datas.clear();
         for(PoubelleMarker pm:listpm)
         {
             // Recup Marker and position of HashMap
@@ -88,7 +119,7 @@ public class FragmentListDistance extends Fragment {
 
             // Calculation of the distance as this instant
             // Push it on the datas list
-            Double distance = CalculationByDistance(new LatLng(48.838790, 2.585753), ll);
+            Double distance = CalculationByDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), ll);
             FragmentMap.FM_TYPE type = pm.getType();
             int drawable = 0;
             switch(type)
@@ -106,14 +137,15 @@ public class FragmentListDistance extends Fragment {
                     drawable = R.drawable.garbagebiggray;
                     break;
             }
-            Data d = new Data(type,String.valueOf(distance)+" km",drawable);
+            Data d = new Data(type,distance,drawable);
             datas.add(d);
         }
         Collections.sort(datas,new CustomComparatorData());
     }
 
-    public static Fragment newInstance(Context context) {
+    public static Fragment newInstance(Context context,Location location) {
         FragmentListDistance f = new FragmentListDistance();
+        f.setCurrentLocation(location);
         return f;
     }
 
@@ -136,9 +168,6 @@ public class FragmentListDistance extends Fragment {
         int kmInDec = Integer.valueOf(newFormat.format(km));
         double meter = valueResult % 1000;
         int meterInDec = Integer.valueOf(newFormat.format(meter));
-        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
-                + " Meter   " + meterInDec);
-
         return Radius * c;
     }
 
