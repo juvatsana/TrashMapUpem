@@ -34,8 +34,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
             @Override
             public void onclickdist(View caller, CharSequence text, int position) {
                 MainActivity main = (MainActivity)context;
-                main.loadFragmentMap(FragmentMap.FM_CONFIG.MAP);
                 listP.get(position);
+                main.loadFragmentMap(FragmentMap.FM_CONFIG.TRACK);
                 Toast toast = Toast.makeText(context, Integer.toString(position),Toast.LENGTH_SHORT);
                 toast.show();
 
