@@ -552,6 +552,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         {
             loadApplicationMarkers(googleMap);
         }
+        else
+        {
+            googleMap.addMarker(new MarkerOptions()
+                    .anchor(0.5f, 1.0f)
+                    .position(new LatLng(trackLocation.getLatitude(),trackLocation.getLongitude()))
+                    .title("Your here")
+                    .snippet("...")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
+        }
 
 
         // START Start listeners or others customs things for map
