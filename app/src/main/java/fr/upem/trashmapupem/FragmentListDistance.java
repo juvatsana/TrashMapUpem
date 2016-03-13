@@ -97,7 +97,7 @@ public class FragmentListDistance extends Fragment {
         super.onStart();
         final List<PoubelleMarker> thelist = FragmentMap.getPosOfMapMark();
         calculListPos(thelist);
-        RVAdapter adapter = new RVAdapter(datas);
+        RVAdapter adapter = new RVAdapter(datas,getActivity(),thelist);
         rv.setAdapter(adapter);
     }
 

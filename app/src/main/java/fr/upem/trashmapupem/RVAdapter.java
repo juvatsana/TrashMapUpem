@@ -1,7 +1,6 @@
 package fr.upem.trashmapupem;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -21,17 +19,33 @@ import java.util.List;
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
 
     List<FragmentListDistance.Data> datas;
+    FragmentActivity context;
+    static List<PoubelleMarker> listP;
 
-    RVAdapter(List<FragmentListDistance.Data> datas){
+    RVAdapter(List<FragmentListDistance.Data> datas, FragmentActivity activity, List<PoubelleMarker> thelist){
         this.datas = datas;
+        this.context = activity;
+        listP = thelist;
     }
 
     @Override
     public PbViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RVAdapter.PbViewHolder.ViewHolderClick vhc = new PbViewHolder.ViewHolderClick() {
+            @Override
+            public void onclickdist(View caller, CharSequence text, int position) {
+                MainActivity main = (MainActivity)context;
+                main.loadFragmentMap(FragmentMap.FM_CONFIG.MAP);
+                listP.get(position);
+                Toast toast = Toast.makeText(context, Integer.toString(position),Toast.LENGTH_SHORT);
+                toast.show();
+
+            }
+        };
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_card, parent, false);
-        PbViewHolder pbh = new PbViewHolder(v);
+        PbViewHolder pbh = new PbViewHolder(v,context,vhc);
         return pbh;
     }
+
 
     @Override
     public void onBindViewHolder(PbViewHolder holder, int position) {
@@ -44,6 +58,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
 
         holder.distance.setText(distanceFormated);
         holder.photoPb.setImageResource(datas.get(position).photoPb);
+
+//
+//        holder.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View arg) {
+//                // TODO Auto-generated method stub
+//                Intent browserIntent = new Intent(context, Uri.parse(animal.wikipedia_url));
+//                startActivity(new Intent(this, MyFragmentActivity.class));
+//                context.startActivity(browserIntent);
+//            }
+//        });
     }
 
     @Override
@@ -51,18 +77,37 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
         return datas.size();
     }
 
-    public static class PbViewHolder extends RecyclerView.ViewHolder {
+    public static class PbViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final FragmentActivity context;
         CardView cardView;
         TextView type;
         TextView distance;
         ImageView photoPb;
+        public ViewHolderClick mListener;
 
-        PbViewHolder(View itemView) {
+        PbViewHolder(View itemView, FragmentActivity context,ViewHolderClick listener) {
             super(itemView);
+            mListener = listener;
             cardView = (CardView)itemView.findViewById(R.id.card);
+
             type = (TextView)itemView.findViewById(R.id.type_pb);
             distance = (TextView)itemView.findViewById(R.id.dist_pb);
             photoPb = (ImageView)itemView.findViewById(R.id.img_card_pb);
+
+            cardView.setOnClickListener(this);
+
+            this.context = context;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            mListener.onclickdist(v, distance.getText(),getPosition());
+        }
+
+        public static interface ViewHolderClick {
+            public void onclickdist(View caller, CharSequence text, int position);
+
         }
     }
 
