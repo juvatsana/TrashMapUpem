@@ -212,7 +212,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode.
+     * Override de la méthode onCreateView.
      * Initialise la GoogleApiClient.
      * @param inflater
      * @param container
