@@ -48,14 +48,6 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.upem.trashmapupem.LoginActivity" />
-        </activity>
-
-        <activity
             android:name=".MainActivity"
             android:label="Main activity"
             android:screenOrientation="portrait"

@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG_MAP="FRAGMENT_PMAP";
     final static String TAG_LIST="FRAGMENT_PLIST";
 
+    /**
+     * Override de la méthode onCreate.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Override de la méthode onSaveInstanceState.
+     * @param savedInstanceState
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -111,7 +119,10 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putDouble("MyLongitude", currentLocation.getLongitude());
     }
 
-
+    /**
+     *
+     * @param navigationView
+     */
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -123,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Override de la méthode onBackPressed pour afficher un évènement customisé.
+     */
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -137,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
                 }).create().show();
     }
 
+    /**
+     * Cache le Fragment suivant le tag du fragment.
+     * @param tag Tag du fragment.
+     */
     public void hideFragment(String tag)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -155,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Affiche un Fragment.
+     * @param fragment Le Fragment à afficher.
+     * @return retourne true si le Fragment a été affiché.
+     */
     public boolean showFragment(Fragment fragment)
     {
         if(fragment==null)return false;
@@ -167,6 +190,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Affiche la FragmentMap.
+     * @param fragment Le FragmentMap à afficher.
+     * @param config Avec une config spéciale.
+     * @return retourne true si le FragmentMap a été affiché.
+     */
     public boolean showFragmentMap(FragmentMap fragment,FragmentMap.FM_CONFIG config)
     {
         if(fragment==null)return false;
@@ -175,6 +204,10 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Charge la dernière localisation de la FragmentMap.
+     * @return Retourne la locasation de la FragmentMap ou une par défault si la FragmentMap n'existe plus.
+     */
     public Location loadLastLocationFromFragmentMap()
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -194,7 +227,10 @@ public class MainActivity extends AppCompatActivity {
         return testLocation;
     }
 
-
+    /**
+     * Charge la FragmentMap.
+     * @param config Utilise une config.
+     */
     public void loadFragmentMap(FragmentMap.FM_CONFIG config)
     {
         hideFragment(TAG_LIST);
@@ -209,6 +245,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i("loadFragmentMap", "added");
     }
 
+    /**
+     * Charge la fragmentList.
+     */
     public void loadFragmentList()
     {
         Location thelocation = loadLastLocationFromFragmentMap();
@@ -229,6 +268,10 @@ public class MainActivity extends AppCompatActivity {
         Log.i("loadFragmentList","added");
     }
 
+    /**
+     * Apelle lorsque l'on choisit une option dans le menu.
+     * @param menuItem
+     */
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on
         // position
@@ -282,6 +325,11 @@ public class MainActivity extends AppCompatActivity {
         mDrawer.closeDrawers();
     }
 
+    /**
+     * @Override onOptionsItemSelected
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
