@@ -42,7 +42,7 @@ import com.google.android.gms.maps.GoogleMap;
 
 /**
  * Custom onMarkerClickListener pour supprimer lorsque l'on appuie sur un marker.
- * Arrive seulement si le fragment delete est utilisé.
+ * Arrive seulement si le fragment delete est utilise.
  */
 public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListener
 {
@@ -53,7 +53,7 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
     private DeleteTrashTask deleteTrashTask;
 
     /**
-     * Créer une nouvelle instance de ListenerDeleteMarkerClick
+     * Creer une nouvelle instance de ListenerDeleteMarkerClick
      * @param fragmentActivity Fragment de l'activité
      * @param activityContext Context de l'application
      * @param themMap La GoogleMap utilisée
@@ -68,9 +68,9 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
     }
 
     /**
-     * Override la méthode onMarkerClick pour demander une suppresion lors d'un clic sur un marqueur.
-     * @param marker Le Marker sur lequel on a appuyé.
-     * @return false Override la méthode markerClick de la map.
+     * Override la methode onMarkerClick pour demander une suppresion lors d'un clic sur un marqueur.
+     * @param marker Le Marker sur lequel on a appuye.
+     * @return false Override la methode markerClick de la map.
      */
     @Override
     public boolean onMarkerClick(final Marker marker) {

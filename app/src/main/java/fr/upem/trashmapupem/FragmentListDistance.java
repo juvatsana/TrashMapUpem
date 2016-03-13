@@ -37,7 +37,7 @@ public class FragmentListDistance extends Fragment {
     }
 
     /**
-     * Custom comparator qui compare une instance de l'objet Data à partir de son champ distance.
+     * Custom comparator qui compare une instance de l'objet Data a partir de son champ distance.
      */
     class CustomComparatorData implements Comparator<Data> {
 
@@ -55,7 +55,7 @@ public class FragmentListDistance extends Fragment {
     }
 
     /**
-     * Class Data pour stocker les informations relatives à une poubelle.
+     * Class Data pour stocker les informations relatives a une poubelle.
      */
     class Data {
         FragmentMap.FM_TYPE type;
@@ -80,7 +80,7 @@ public class FragmentListDistance extends Fragment {
     private Location currentLocation;
 
     /**
-     * Override la méthode onCreateView.
+     * Override la methode onCreateView.
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -121,7 +121,7 @@ public class FragmentListDistance extends Fragment {
     }
 
     /**
-     * Override de la méthode onStart.
+     * Override de la methode onStart.
      * Initialisation.
      */
     @Override
@@ -136,7 +136,7 @@ public class FragmentListDistance extends Fragment {
     }
 
     /**
-     * Override de la méthode onStop.
+     * Override de la methode onStop.
      */
     @Override
     public void onStop()
@@ -185,10 +185,10 @@ public class FragmentListDistance extends Fragment {
     }
 
     /**
-     * Créer une nouvelle instance de FragmentListDistance.
-     * @param context  Context de l'application
-     * @param location LastLocation trouver sur le fragmentMap
-     * @return le fragment créé
+     * Creer une nouvelle instance de FragmentListDistance.
+     * @param context  Context de l'application.
+     * @param location LastLocation trouver sur le fragmentMap.
+     * @return Le fragment cree.
      */
     public static Fragment newInstance(Context context,Location location) {
         FragmentListDistance f = new FragmentListDistance();
@@ -198,9 +198,9 @@ public class FragmentListDistance extends Fragment {
 
     /**
      * Calcule de la distance entre deux instances de LatLng.
-     * @param StartP LatLng de début
-     * @param EndP LatLng de fin
-     * @return Distance au format double
+     * @param StartP LatLng de debut.
+     * @param EndP LatLng de fin.
+     * @return Distance au format double.
      */
     public static double CalculationByDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371;// radius of earth in Km
@@ -246,9 +246,9 @@ public class FragmentListDistance extends Fragment {
         }
 
         /**
-         * Override de la méthode getItemId.
-         * Notifier la position de chacun des ArrayAdapter.
-         * @param position position
+         * Override de la methode getItemId.
+         * Notifie la position de chacun des ArrayAdapter.
+         * @param position La position.
          * @return
          */
         @Override
@@ -258,7 +258,7 @@ public class FragmentListDistance extends Fragment {
         }
 
         /**
-         * Override de la méthode hasStableIds
+         * Override de la methode hasStableIds.
          * @return
          */
         @Override

@@ -41,7 +41,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 
 /**
- * A login screen that offers login via email/password.
+ * Activite pour se logger.
  */
 public class LoginActivity extends AppCompatActivity{
 
@@ -66,6 +66,10 @@ public class LoginActivity extends AppCompatActivity{
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
 
+    /**
+     * Override de la methode onCreate.
+     * @param savedInstanceState Sauvegarde.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);

@@ -212,7 +212,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onCreateView.
+     * Override de la methode onCreateView.
      * Initialise la GoogleApiClient.
      * @param inflater
      * @param container
@@ -233,8 +233,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onStart.
-     * Se connecte à la GoogleApiClient. Si il est déjà connecté car il s'est mis en pause, il charge la dernière localisation.
+     * Override de la methode onStart.
+     * Se connecte à la GoogleApiClient. Si il est deja connecte car il s'est mis en pause, il charge la derniere localisation.
      */
     @Override
     public void onStart()
@@ -254,8 +254,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onStop.
-     * Se déconnecté de la GoogleApiClient.
+     * Override de la methode onStop.
+     * Se deconnecte de la GoogleApiClient.
      */
     @Override
     public void onStop()
@@ -266,7 +266,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Initialise la requête de localisation.
+     * Initialise la requete de localisation.
      */
     public void initLocationRequest()
     {
@@ -286,7 +286,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Renvoie true si la distance entre les deux localisation est supèrieur à la distance minimum renseignée.
+     * Renvoie true si la distance entre les deux localisation est superieur a la distance minimum renseignee.
      * @param location Première localisation.
      * @param location2 Deuxième localisation.
      * @param distanceMin Distance minimum.
@@ -305,7 +305,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Charge la dernière localisation trouvée sinon prend celle par défault.
+     * Charge la derniere localisation trouvee sinon prend celle par default.
      */
     public void loadLastLocation()
     {
@@ -419,8 +419,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onConnected.
-     * Charge la dernière localisation.
+     * Override de la methode onConnected.
+     * Charge la derniere localisation.
      * @param connectionHint
      */
     @Override
@@ -434,8 +434,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onConnectionSuspended.
-     * @param i
+     * Override de la methode onConnectionSuspended.
+     * @param i Indice.
      */
      @Override
     public void onConnectionSuspended(int i) {
@@ -443,7 +443,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onConnectionFailed
+     * Override de la methode onConnectionFailed.
      * @param connectionResult
      */
     @Override
@@ -452,8 +452,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onLocationChanged. Dépend de la LocationRequest.
-     * Permis de charger la dernière localisation.
+     * Override de la methode onLocationChanged. Depend de la LocationRequest.
+     * Permis de charger la derniere localisation.
      * @param location La nouvelle localisation.
      */
     @Override
@@ -471,7 +471,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Affiche une alerte si votre gps est désactivé.
+     * Affiche une alerte si votre gps est desactive.
      */
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -502,7 +502,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Override de la méthode onDestroy.
+     * Override de la methode onDestroy.
      */
     @Override
     public void onDestroy()
@@ -512,7 +512,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Appel de la méthode onMapReady appelé avec la méthode getMapAsync.
+     * Appel de la methode onMapReady appele avec la methode getMapAsync.
      * @param googleMap La GoogleMap actuelle.
      */
     @Override
@@ -564,14 +564,26 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Check si le listener Ajout est true.
+     * @return Le boolean Ajout.
+     */
     public boolean isOnListenerAjout() {
         return onListenerAjout;
     }
 
+    /**
+     * Check si le listener Delete est true.
+     * @return Le boolean Delete.
+     */
     public boolean isOnListenerDelete() {
         return onListenerDelete;
     }
 
+    /**
+     * Check si le listener Main est true.
+     * @return Le boolean Main.
+     */
     public boolean isOnListenerMain() {
         return onListenerMain;
     }

@@ -25,6 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import fr.upem.trashmapupem.Task.GetAllTrashTask;
 
+/**
+ * Activite principale.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawer;
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG_LIST="FRAGMENT_PLIST";
 
     /**
-     * Override de la méthode onCreate.
+     * Override de la methode onCreate.
      * @param savedInstanceState
      */
     @Override
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Override de la méthode onSaveInstanceState.
+     * Override de la methode onSaveInstanceState.
      * @param savedInstanceState
      */
     @Override
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * Setup le contenu du Drawer.
      * @param navigationView
      */
     private void setupDrawerContent(NavigationView navigationView) {
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Override de la méthode onBackPressed pour afficher un évènement customisé.
+     * Override de la methode onBackPressed pour afficher un evenement customise.
      */
     @Override
     public void onBackPressed() {
@@ -152,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Cache le Fragment suivant le tag du fragment.
-     * @param tag Tag du fragment.
+     * Cache le Fragment recupere avec le tag du fragment.
+     * @param tag Tag du Fragment.
      */
     public void hideFragment(String tag)
     {
@@ -175,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Affiche un Fragment.
-     * @param fragment Le Fragment à afficher.
-     * @return retourne true si le Fragment a été affiché.
+     * @param fragment Le Fragment a afficher.
+     * @return retourne true si le Fragment a ete affiche.
      */
     public boolean showFragment(Fragment fragment)
     {
@@ -192,9 +195,9 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Affiche la FragmentMap.
-     * @param fragment Le FragmentMap à afficher.
-     * @param config Avec une config spéciale.
-     * @return retourne true si le FragmentMap a été affiché.
+     * @param fragment Le FragmentMap a afficher.
+     * @param config Avec une config speciale.
+     * @return retourne true si le FragmentMap a ete affiche.
      */
     public boolean showFragmentMap(FragmentMap fragment,FragmentMap.FM_CONFIG config)
     {
@@ -205,8 +208,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Charge la dernière localisation de la FragmentMap.
-     * @return Retourne la locasation de la FragmentMap ou une par défault si la FragmentMap n'existe plus.
+     * Charge la derniere localisation de la FragmentMap.
+     * @return Retourne la locasation de la FragmentMap ou une par default si la FragmentMap n'existe plus.
      */
     public Location loadLastLocationFromFragmentMap()
     {
@@ -246,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Charge la fragmentList.
+     * Charge la FragmentListDistance.
      */
     public void loadFragmentList()
     {
@@ -326,9 +329,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * @Override onOptionsItemSelected
-     * @param item
-     * @return
+     * Override de la methode onOptionsItemSelected.
+     * @param item menu selectione.
+     * @return true si pris en compte.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -342,8 +345,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // `onPostCreate` called when activity start-up is complete after `onStart()`
-    // NOTE! Make sure to override the method with only a single `Bundle` argument
+    /**
+     * Apeller lorsque l'activite a fini de demarrer, apres le onStart.
+     * @param savedInstanceState Sauvegarde.
+     */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

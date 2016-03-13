@@ -53,10 +53,10 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
     private Circle thecircle;
 
     /**
-     * Créer une nouvelle instance de ListenerMarkerClick
-     * @param fragmentActivity Fragment de l'activité
-     * @param activityContext Context de l'application
-     * @param themMap La GoogleMap utilisée
+     * Creer une nouvelle instance de ListenerMarkerClick.
+     * @param fragmentActivity Fragment de l'activite.
+     * @param activityContext Context de l'application.
+     * @param themMap La GoogleMap utilisee.
      */
     public ListenerMarkerClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
@@ -66,9 +66,9 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
     }
 
     /**
-     * Ajoute un cercle sur la GoogleMap sur la position du marker
-     * @param lat Latitude de la position
-     * @param lang Longitude de la position
+     * Ajoute un cercle sur la GoogleMap sur la position du marker.
+     * @param lat Latitude de la position.
+     * @param lang Longitude de la position.
      */
     private void addCircleAtPosition(double lat, double lang) {
 
@@ -83,9 +83,9 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
     }
 
     /**
-     * Override la méthode onMarkerClick pour personnaliser l'évènement.
-     * @param marker Marker lorsque le click est effectué.
-     * @return false pour continuer à afficher l'infoWindow
+     * Override la methode onMarkerClick pour personnaliser l'evenement.
+     * @param marker Marker lorsque le click est effectue.
+     * @return false pour continuer a afficher l'infoWindow.
      */
     @Override
     public boolean onMarkerClick(final Marker marker) {

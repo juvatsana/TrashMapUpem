@@ -47,10 +47,10 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
     private GoogleMap themMap;
 
     /**
-     * Créer une nouvelle instance de ListenerInfoWindow
-     * @param fragmentActivity Fragment de l'activité
-     * @param activityContext Context de l'application
-     * @param themMap La GoogleMap utilisée
+     * Creer une nouvelle instance de ListenerInfoWindow.
+     * @param fragmentActivity Fragment de l'activite.
+     * @param activityContext Context de l'application.
+     * @param themMap La GoogleMap utilisee.
      */
     public ListenerInfoWindow(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
@@ -60,8 +60,8 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
     }
 
     /**
-     * Override la méthode getInfoWindow pour personnaliser l'évènement.
-     * @param arg0 Marker lorsque le click est effectué.
+     * Override la methode getInfoWindow pour personnaliser l'evenement.
+     * @param arg0 Marker lorsque le click est effectue.
      * @return La vue
      */
     @Override
@@ -120,8 +120,8 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
     }
 
     /**
-     * Override la méthode getInfoContents pour personnaliser l'évènement.
-     * @param arg0 Marker lorsque le click est effectué.
+     * Override la methode getInfoContents pour personnaliser l'evenement.
+     * @param arg0 Marker lorsque le click est effectue.
      * @return null
      */
     @Override

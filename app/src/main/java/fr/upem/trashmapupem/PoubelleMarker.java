@@ -3,7 +3,7 @@ package fr.upem.trashmapupem;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
- * Class qui permet de représenter le marquer d'une poubelle
+ * Classe qui permet de representer le marker d'une poubelle.
  */
 public class PoubelleMarker {
 
@@ -11,7 +11,7 @@ public class PoubelleMarker {
     private MarkerOptions marker;
 
     /**
-     * Creer une nouvelle instance de marker de poubelle
+     * Creer une nouvelle instance de marker de poubelle.
      * @param type Correspond au type de poubelle
      * @param marker Contient toutes les informations du marker (longitude,latitude...)
      */
@@ -22,16 +22,16 @@ public class PoubelleMarker {
     }
 
     /**
-     * Enum qui correspond au type de poubelle
-     * @return le type de poubelle
+     * Enum qui correspond au type de la poubelle.
+     * @return Le type de poubelle.
      */
     public FragmentMap.FM_TYPE getType() {
         return type;
     }
 
     /**
-     * Informations du marker
-     * @return les informations relatives au marker
+     * Informations du marker.
+     * @return Les informations relatives au marker.
      */
     public MarkerOptions getMarkerOptions()
     {

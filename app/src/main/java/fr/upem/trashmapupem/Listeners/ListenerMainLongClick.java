@@ -47,10 +47,10 @@ public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
     private GoogleMap themMap;
 
     /**
-     * Créer une nouvelle instance de ListenerMainLongClick
-     * @param fragmentActivity Fragment de l'activité
-     * @param activityContext Context de l'application
-     * @param themMap La GoogleMap utilisée
+     * Creer une nouvelle instance de ListenerMainLongClick.
+     * @param fragmentActivity Fragment de l'activite.
+     * @param activityContext Context de l'application.
+     * @param themMap La GoogleMap utilisee.
      */
     public ListenerMainLongClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
@@ -60,8 +60,8 @@ public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
     }
 
     /**
-     * Override la méthode onMapLongClick pour personnaliser l'évènement.
-     * @param arg0 Position lorsque le click est effectué.
+     * Override la methode onMapLongClick pour personnaliser l'evenement.
+     * @param arg0 Position lorsque le click est effectue.
      */
     @Override
     public void onMapLongClick(LatLng arg0)
