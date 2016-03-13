@@ -8,13 +8,20 @@ Le projet **TrashMap** vise à développer une application mobile sur android pe
 <br/>
 
 
-## ScreenShot
-
-![alt text](https://github.com/juvatsana/TrashMapUpem/blob/master/app/src/main/res/drawable/pb.png "Logo Title Text 1")
-
 ## Installation
 
+Télécharger android studio
 
+### Méthode 1 from android studio
+créer un projet from version control avec ce git :
+git@github.com:juvatsana/TrashMapUpem.git
+
+### Méthode 2 command line
+````
+git clone git@github.com:juvatsana/TrashMapUpem.git
+````
+
+Lancer l'application avec un téléphone ou un émulateur.
 
 ## API Reference
 
