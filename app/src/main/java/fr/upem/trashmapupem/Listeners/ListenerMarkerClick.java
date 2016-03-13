@@ -43,7 +43,7 @@ import fr.upem.trashmapupem.Task.InsertTrashTask;
 import com.google.android.gms.maps.GoogleMap;
 
 /**
- * Listener for marker click in delete fragment
+ * Custom OnMarkerClickListener pour ajouter un cercle sur le marker cliqué.
  */
 public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
 {
@@ -52,6 +52,12 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
     private GoogleMap themMap;
     private Circle thecircle;
 
+    /**
+     * Creer une nouvelle instance de ListenerMarkerClick.
+     * @param fragmentActivity Fragment de l'activite.
+     * @param activityContext Context de l'application.
+     * @param themMap La GoogleMap utilisee.
+     */
     public ListenerMarkerClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
         this.fragmentActivity = fragmentActivity;
@@ -59,6 +65,11 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
         this.themMap = themMap;
     }
 
+    /**
+     * Ajoute un cercle sur la GoogleMap sur la position du marker.
+     * @param lat Latitude de la position.
+     * @param lang Longitude de la position.
+     */
     private void addCircleAtPosition(double lat, double lang) {
 
         CircleOptions mOptions = new CircleOptions()
@@ -71,6 +82,11 @@ public class ListenerMarkerClick implements GoogleMap.OnMarkerClickListener
         thecircle = themMap.addCircle(mOptions);
     }
 
+    /**
+     * Override la methode onMarkerClick pour personnaliser l'evenement.
+     * @param marker Marker lorsque le click est effectue.
+     * @return false pour continuer a afficher l'infoWindow.
+     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
         final Marker markerToDelete = marker;

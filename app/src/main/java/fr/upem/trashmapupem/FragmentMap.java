@@ -41,6 +41,7 @@ import java.util.Map;
 import fr.upem.trashmapupem.Listeners.*;
 
 /**
+ * Fragment qui permet d'afficher la GoogleMap.
  * Created by Mourougan on 05/03/2016.
  */
 public class FragmentMap extends Fragment implements OnMapReadyCallback,ConnectionCallbacks,OnConnectionFailedListener,LocationListener {
@@ -53,13 +54,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     public void setCurrentLocation(Location location) { this.currentLocation = currentLocation;}
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
-    public enum FM_CONFIG {ADD,DELETE,MAP}
+    public enum FM_CONFIG {ADD,DELETE,MAP,TRACK}
 
     private GoogleMap mMap;
     private static HashMap<String,PoubelleMarker> mapMark = new HashMap<String,PoubelleMarker>();
     private boolean onListenerAjout=false;
     private boolean onListenerDelete=false;
     private boolean onListenerMain=true;
+    private boolean onListenerTrack=false;
 
     private GoogleApiClient playServices;
     private LocationRequest theLocationRequest;
@@ -70,7 +72,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     private boolean firstStart=true;
 
     /**
-     * Only use for convert a string to FM_TYPE
+     * Utiliser uniquement pour converter une couleur en enum FM_TYPE
      * @param type
      * @return FM_TYPE
      */
@@ -100,6 +102,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return thetype;
     }
 
+    /**
+     * Récupère l'instance PoubelleMarker de mapMark à partir de la clé de la map.
+     * @param key Clé de la map
+     * @return La valeur PoubelleMarker
+     */
     public static PoubelleMarker getPoubelleMarkerFromMap(String key)
     {
         if(mapMark.containsKey(key))
@@ -109,6 +116,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return null;
     }
 
+    /**
+     * Retourne une liste des PoubelleMarker de la map mapMark
+     * @return
+     */
     public static List<PoubelleMarker> getPosOfMapMark()
     {
         List<PoubelleMarker> list = new ArrayList<>();
@@ -121,13 +132,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Add a marker for future instance
-     * @param newMarker
-     * @return sucess or not
+     * Supprimer un marker de la map mapMark
+     * @param newMarker Marker à supprimer
      */
-    public static Marker removeFragmentMapMarker(Marker newMarker)
+    public static void removeFragmentMapMarker(Marker newMarker)
     {
-        if(newMarker==null)return null;
+        if(newMarker==null)return;
 
         LatLng LL = newMarker.getPosition();
         String newMarkKey=String.valueOf(LL.latitude)+":"+String.valueOf(LL.longitude);
@@ -135,11 +145,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         if(mapMark.containsKey(newMarkKey))
         {
             mapMark.remove(newMarkKey);
-            return newMarker;
         }
-        return null;
+        return;
     }
 
+    /**
+     * Ajoute une marker sur la GoogleMap.
+     * @param newMarker MarkerOptions à ajouter
+     * @param color Couleur à ajouter sous forme de FM_TYPE
+     * @return Nouvelle MarkerOptions
+     */
     public static MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,FM_TYPE color)
     {
         if(newMarker == null)  return null;
@@ -187,11 +202,24 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return null;
     }
 
+    /**
+     * Créer une nouvelle instance du FragmentMap.
+     * @param context Context de l'application
+     * @return Instance du FragmentMap créé.
+     */
     public static Fragment newInstance(Context context) {
         FragmentMap f = new FragmentMap();
         return f;
     }
 
+    /**
+     * Override de la methode onCreateView.
+     * Initialise la GoogleApiClient.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         Log.i("Fragment map INFO", "PREPARATION DE ONCREATE");
@@ -205,6 +233,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return root;
     }
 
+    /**
+     * Override de la methode onStart.
+     * Se connecte à la GoogleApiClient. Si il est deja connecte car il s'est mis en pause, il charge la derniere localisation.
+     */
     @Override
     public void onStart()
     {
@@ -222,6 +254,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         playServices.connect();
     }
 
+    /**
+     * Override de la methode onStop.
+     * Se deconnecte de la GoogleApiClient.
+     */
     @Override
     public void onStop()
     {
@@ -230,6 +266,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         super.onStop();
     }
 
+    /**
+     * Initialise la requete de localisation.
+     */
     public void initLocationRequest()
     {
         theLocationRequest = LocationRequest.create();
@@ -237,6 +276,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         theLocationRequest.setInterval(1000); // Update location every second
     }
 
+    /**
+     * Initialise la position courrante.
+     */
     public void initCurrentlocation()
     {
         currentLocation = new Location("");
@@ -244,6 +286,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         getCurrentLocation().setLongitude(2.5850778d);
     }
 
+    /**
+     * Renvoie true si la distance entre les deux localisation est superieur a la distance minimum renseignee.
+     * @param location Première localisation.
+     * @param location2 Deuxième localisation.
+     * @param distanceMin Distance minimum.
+     * @return
+     */
     public boolean comparatorDistanceWithMinimum(Location location,Location location2,Double distanceMin)
     {
         LatLng latLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -256,6 +305,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return false;
     }
 
+    /**
+     * Charge la derniere localisation trouvee sinon prend celle par default.
+     */
     public void loadLastLocation()
     {
         Location mobileLocation = null;
@@ -293,6 +345,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Charge le marker current.
+     * @param googleMap
+     */
     public void loadCurrentMarker(GoogleMap googleMap)
     {
         if(currentMarker!=null)
@@ -307,6 +363,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                     .snippet("...")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
     }
+
+    /**
+     * Charge les marker de la map dans la GoogleMap.
+     * @param googleMap
+     */
     public void loadApplicationMarkers(GoogleMap googleMap)
     {
         Iterator it = mapMark.entrySet().iterator();
@@ -317,6 +378,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Charge une config.
+     * @param config La config voulue.
+     */
     public void loadConfig(FM_CONFIG config)
     {
         if(config==null)
@@ -329,20 +394,33 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                 onListenerDelete = false;
                 onListenerAjout = true;
                 onListenerMain = false;
+                onListenerTrack = false;
                 break;
             case DELETE:
                 onListenerDelete = true;
                 onListenerAjout = false;
                 onListenerMain = false;
+                onListenerTrack = false;
                 break;
             case MAP:
                 onListenerDelete = false;
                 onListenerAjout = false;
                 onListenerMain = true;
+                onListenerTrack = false;
+                break;
+            case TRACK:
+                onListenerDelete = false;
+                onListenerAjout = false;
+                onListenerMain = false;
+                onListenerTrack = true;
                 break;
         }
     }
 
+    /**
+     * Initialise les listeners.
+     * @param googleMap
+     */
     public void initListeners(GoogleMap googleMap)
     {
         googleMap.setOnMapLongClickListener(null);
@@ -350,6 +428,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         googleMap.setOnMapClickListener(null);
     }
 
+    /**
+     * Override de la methode onConnected.
+     * Charge la derniere localisation.
+     * @param connectionHint
+     */
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Google API", "OK");
@@ -360,16 +443,29 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         myMAPF.getMapAsync(this); // Call onMapReady
     }
 
+    /**
+     * Override de la methode onConnectionSuspended.
+     * @param i Indice.
+     */
      @Override
     public void onConnectionSuspended(int i) {
         Log.d("Connection suspended", "Connection suspended");
     }
 
+    /**
+     * Override de la methode onConnectionFailed.
+     * @param connectionResult
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d("Connection failed", "Connection failed");
     }
 
+    /**
+     * Override de la methode onLocationChanged. Depend de la LocationRequest.
+     * Permis de charger la derniere localisation.
+     * @param location La nouvelle localisation.
+     */
     @Override
     public void onLocationChanged(Location location) {
         if(currentLocation==null)return;
@@ -384,6 +480,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         Log.i("Location received: ", location.toString());
     }
 
+    /**
+     * Affiche une alerte si votre gps est desactive.
+     */
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
@@ -411,13 +510,21 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         // Showing Alert Message
         alertDialog.show();
     }
+
+    /**
+     * Override de la methode onDestroy.
+     */
     @Override
     public void onDestroy()
     {
-        Log.i("onDestroy","Yes");
+        Log.i("onDestroy", "Yes");
         super.onDestroy();
     }
 
+    /**
+     * Appel de la methode onMapReady appele avec la methode getMapAsync.
+     * @param googleMap La GoogleMap actuelle.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -440,7 +547,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 16));
 
-        loadApplicationMarkers(googleMap);
+        if(!isOnListenerTrack())
+        {
+            loadApplicationMarkers(googleMap);
+        }
+
 
         // START Start listeners or others customs things for map
         // Custom marker click
@@ -467,16 +578,36 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Check si le listener Ajout est true.
+     * @return Le boolean Ajout.
+     */
     public boolean isOnListenerAjout() {
         return onListenerAjout;
     }
 
+    /**
+     * Check si le listener Delete est true.
+     * @return Le boolean Delete.
+     */
     public boolean isOnListenerDelete() {
         return onListenerDelete;
     }
 
+    /**
+     * Check si le listener Main est true.
+     * @return Le boolean Main.
+     */
     public boolean isOnListenerMain() {
         return onListenerMain;
+    }
+
+    /**
+     * Check si le listener Track est true.
+     * @return Le boolean Track.
+     */
+    public boolean isOnListenerTrack() {
+        return onListenerTrack;
     }
 }
 

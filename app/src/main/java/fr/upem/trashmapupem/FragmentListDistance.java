@@ -24,15 +24,29 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Juan on 06/03/2016.
+ * Fragment qui permet d'afficher une liste des poubelles aux alentours.
  */
 public class FragmentListDistance extends Fragment {
 
+    /**
+     * Modifie la localisation courrante
+     * @param currentLocation la nouvelle localisation
+     */
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
     }
 
+    /**
+     * Custom comparator qui compare une instance de l'objet Data a partir de son champ distance.
+     */
     class CustomComparatorData implements Comparator<Data> {
+
+        /**
+         * Override de la méthode compare
+         * @param o1 Première instance Data à comparer
+         * @param o2 Deuxième instance Data à comparer
+         * @return return de la méthode Double.comparator
+         */
         @Override
         public int compare(Data o1, Data o2) {
 
@@ -40,11 +54,20 @@ public class FragmentListDistance extends Fragment {
         }
     }
 
+    /**
+     * Class Data pour stocker les informations relatives a une poubelle.
+     */
     class Data {
         FragmentMap.FM_TYPE type;
         double distance;
         int photoPb;
 
+        /**
+         * Nouvelle instance de data
+         * @param type Type de poubelle
+         * @param distance distance par rapport à la position courrante
+         * @param photoPb id de la photo de la poubelle
+         */
         Data(FragmentMap.FM_TYPE type, double distance, int photoPb) {
             this.type = type;
             this.distance = distance;
@@ -56,6 +79,13 @@ public class FragmentListDistance extends Fragment {
     private RecyclerView rv;
     private Location currentLocation;
 
+    /**
+     * Override la methode onCreateView.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
@@ -90,6 +120,10 @@ public class FragmentListDistance extends Fragment {
         return root;
     }
 
+    /**
+     * Override de la methode onStart.
+     * Initialisation.
+     */
     @Override
     public void onStart()
     {
@@ -101,6 +135,9 @@ public class FragmentListDistance extends Fragment {
         rv.setAdapter(adapter);
     }
 
+    /**
+     * Override de la methode onStop.
+     */
     @Override
     public void onStop()
     {
@@ -108,6 +145,10 @@ public class FragmentListDistance extends Fragment {
         super.onStop();
     }
 
+    /**
+     * Calcule des positions des poubelles aux alentours.
+     * @param listpm Liste de PoubelleMarker
+     */
     public void calculListPos(List<PoubelleMarker> listpm)
     {
         datas.clear();
@@ -140,15 +181,27 @@ public class FragmentListDistance extends Fragment {
             Data d = new Data(type,distance,drawable);
             datas.add(d);
         }
-        Collections.sort(datas,new CustomComparatorData());
+        Collections.sort(datas, new CustomComparatorData());
     }
 
+    /**
+     * Creer une nouvelle instance de FragmentListDistance.
+     * @param context  Context de l'application.
+     * @param location LastLocation trouver sur le fragmentMap.
+     * @return Le fragment cree.
+     */
     public static Fragment newInstance(Context context,Location location) {
         FragmentListDistance f = new FragmentListDistance();
         f.setCurrentLocation(location);
         return f;
     }
 
+    /**
+     * Calcule de la distance entre deux instances de LatLng.
+     * @param StartP LatLng de debut.
+     * @param EndP LatLng de fin.
+     * @return Distance au format double.
+     */
     public static double CalculationByDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371;// radius of earth in Km
         double lat1 = StartP.latitude;
@@ -171,10 +224,19 @@ public class FragmentListDistance extends Fragment {
         return Radius * c;
     }
 
+    /**
+     * Custom ArrayAdapter.
+     */
     private class StableArrayAdapter extends ArrayAdapter<String> {
 
         HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
 
+        /**
+         * Nouvelle instance de StableArrayAdapter.
+         * @param context Context de l'application
+         * @param textViewResourceId Id de la ressource
+         * @param objects List de string
+         */
         public StableArrayAdapter(Context context, int textViewResourceId,
                                   List<String> objects) {
             super(context, textViewResourceId, objects);
@@ -183,12 +245,22 @@ public class FragmentListDistance extends Fragment {
             }
         }
 
+        /**
+         * Override de la methode getItemId.
+         * Notifie la position de chacun des ArrayAdapter.
+         * @param position La position.
+         * @return
+         */
         @Override
         public long getItemId(int position) {
             String item = getItem(position);
             return mIdMap.get(item);
         }
 
+        /**
+         * Override de la methode hasStableIds.
+         * @return
+         */
         @Override
         public boolean hasStableIds() {
             return true;

@@ -41,7 +41,8 @@ import fr.upem.trashmapupem.Task.InsertTrashTask;
 import com.google.android.gms.maps.GoogleMap;
 
 /**
- * Listener for marker click in delete fragment
+ * Custom onMarkerClickListener pour supprimer lorsque l'on appuie sur un marker.
+ * Arrive seulement si le fragment delete est utilise.
  */
 public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListener
 {
@@ -51,6 +52,12 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
 
     private DeleteTrashTask deleteTrashTask;
 
+    /**
+     * Creer une nouvelle instance de ListenerDeleteMarkerClick
+     * @param fragmentActivity Fragment de l'activité
+     * @param activityContext Context de l'application
+     * @param themMap La GoogleMap utilisée
+     */
     public ListenerDeleteMarkerClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
         this.fragmentActivity = fragmentActivity;
@@ -60,6 +67,11 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
         deleteTrashTask = null;
     }
 
+    /**
+     * Override la methode onMarkerClick pour demander une suppresion lors d'un clic sur un marqueur.
+     * @param marker Le Marker sur lequel on a appuye.
+     * @return false Override la methode markerClick de la map.
+     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
         final Marker markerToDelete = marker;
@@ -74,7 +86,7 @@ public class ListenerDeleteMarkerClick implements GoogleMap.OnMarkerClickListene
                         deleteTrashTask.execute();
 
                         // Delete marker
-                        Marker newMarkerToDelete = FragmentMap.removeFragmentMapMarker(markerToDelete);
+                        FragmentMap.removeFragmentMapMarker(markerToDelete);
                         markerToDelete.remove();
 
                         // Render a message/toast

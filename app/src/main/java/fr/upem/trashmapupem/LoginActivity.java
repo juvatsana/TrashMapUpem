@@ -41,7 +41,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 
 /**
- * A login screen that offers login via email/password.
+ * Activite pour se logger.
  */
 public class LoginActivity extends AppCompatActivity{
 
@@ -66,9 +66,21 @@ public class LoginActivity extends AppCompatActivity{
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
 
+    /**
+     * Override de la methode onCreate.
+     * @param savedInstanceState Sauvegarde.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        if(savedInstanceState==null)
+        {
+            Log.e("Login OnCreate","null");
+        }
+        else
+        {
+            Log.e("Login OnCreate","Good");
+        }
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -202,6 +214,7 @@ public class LoginActivity extends AppCompatActivity{
         private final String mEmail;
         private final String mPassword;
         private ProgressDialog prodDialog;
+
 
         UserLoginTask(String email, String password) {
             mEmail = email;

@@ -25,6 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import fr.upem.trashmapupem.Task.GetAllTrashTask;
 
+/**
+ * Activite principale.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawer;
@@ -35,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG_MAP="FRAGMENT_PMAP";
     final static String TAG_LIST="FRAGMENT_PLIST";
 
+    /**
+     * Override de la methode onCreate.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Override de la methode onSaveInstanceState.
+     * @param savedInstanceState
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -111,7 +122,10 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putDouble("MyLongitude", currentLocation.getLongitude());
     }
 
-
+    /**
+     * Setup le contenu du Drawer.
+     * @param navigationView
+     */
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -123,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Override de la methode onBackPressed pour afficher un evenement customise.
+     */
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -137,12 +154,17 @@ public class MainActivity extends AppCompatActivity {
                 }).create().show();
     }
 
+    /**
+     * Cache le Fragment recupere avec le tag du fragment.
+     * @param tag Tag du Fragment.
+     */
     public void hideFragment(String tag)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment testFragmentList=fragmentManager.findFragmentByTag(tag);
         if(testFragmentList!=null)
         {
+            Log.i("test Fragment",testFragmentList.getId()+" : "+R.id.flContent);
             Log.i("test Fragment",tag+" : NOT NULL");
             fragmentManager.beginTransaction().hide(testFragmentList).commit();
 
@@ -155,6 +177,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Affiche un Fragment.
+     * @param fragment Le Fragment a afficher.
+     * @return retourne true si le Fragment a ete affiche.
+     */
     public boolean showFragment(Fragment fragment)
     {
         if(fragment==null)return false;
@@ -167,6 +194,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Affiche la FragmentMap.
+     * @param fragment Le FragmentMap a afficher.
+     * @param config Avec une config speciale.
+     * @return retourne true si le FragmentMap a ete affiche.
+     */
     public boolean showFragmentMap(FragmentMap fragment,FragmentMap.FM_CONFIG config)
     {
         if(fragment==null)return false;
@@ -175,6 +208,10 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Charge la derniere localisation de la FragmentMap.
+     * @return Retourne la locasation de la FragmentMap ou une par default si la FragmentMap n'existe plus.
+     */
     public Location loadLastLocationFromFragmentMap()
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -194,7 +231,10 @@ public class MainActivity extends AppCompatActivity {
         return testLocation;
     }
 
-
+    /**
+     * Charge la FragmentMap.
+     * @param config Utilise une config.
+     */
     public void loadFragmentMap(FragmentMap.FM_CONFIG config)
     {
         hideFragment(TAG_LIST);
@@ -209,6 +249,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i("loadFragmentMap", "added");
     }
 
+    /**
+     * Charge la FragmentListDistance.
+     */
     public void loadFragmentList()
     {
         Location thelocation = loadLastLocationFromFragmentMap();
@@ -229,6 +272,10 @@ public class MainActivity extends AppCompatActivity {
         Log.i("loadFragmentList","added");
     }
 
+    /**
+     * Apelle lorsque l'on choisit une option dans le menu.
+     * @param menuItem
+     */
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on
         // position
@@ -282,6 +329,11 @@ public class MainActivity extends AppCompatActivity {
         mDrawer.closeDrawers();
     }
 
+    /**
+     * Override de la methode onOptionsItemSelected.
+     * @param item menu selectione.
+     * @return true si pris en compte.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
@@ -294,8 +346,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // `onPostCreate` called when activity start-up is complete after `onStart()`
-    // NOTE! Make sure to override the method with only a single `Bundle` argument
+    /**
+     * Apeller lorsque l'activite a fini de demarrer, apres le onStart.
+     * @param savedInstanceState Sauvegarde.
+     */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

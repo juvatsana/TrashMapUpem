@@ -21,7 +21,8 @@ import fr.upem.trashmapupem.Task.InsertTrashTask;
 import fr.upem.trashmapupem.R;
 
 /**
- * Listener for map click in add fragment
+ * Custom onMapClickListener pour ajouter des poubelles sur la GoogleMap.
+ * Arrive seulement si le fragment Ajout est utilise.
  */
 public class ListenerAddClick implements GoogleMap.OnMapClickListener{
 
@@ -31,6 +32,12 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
     private Context activityContext;
     private GoogleMap themMap;
 
+    /**
+     * Creer une nouvelle instance de ListenerAddClick.
+     * @param fragmentActivity Fragment de l'activite.
+     * @param activityContext Context de l'application.
+     * @param themMap La GoogleMap utilisee.
+     */
     public ListenerAddClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
         this.fragmentActivity = fragmentActivity;
@@ -38,6 +45,10 @@ public class ListenerAddClick implements GoogleMap.OnMapClickListener{
         this.themMap = themMap;
     }
 
+    /**
+     * Override la methode onMapClick pour personnaliser l'evenement.
+     * @param arg0 Position lorsque le click est effectue.
+     */
     @Override
     public void onMapClick(LatLng arg0) {
         final LatLng point = arg0;
