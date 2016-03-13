@@ -28,16 +28,20 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
         listP = thelist;
     }
 
+    /***
+     * Overwrited method all all clickable viewHolder in Adapter. Implements interface ViewHolderClick to change on click method.
+     * Call
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public PbViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RVAdapter.PbViewHolder.ViewHolderClick vhc = new PbViewHolder.ViewHolderClick() {
             @Override
             public void onclickdist(View caller, CharSequence text, int position) {
                 MainActivity main = (MainActivity)context;
-                listP.get(position);
-                main.loadFragmentMap(FragmentMap.FM_CONFIG.TRACK);
-                Toast toast = Toast.makeText(context, Integer.toString(position),Toast.LENGTH_SHORT);
-                toast.show();
+                main.loadFragmentMapTrack(FragmentMap.FM_CONFIG.TRACK,listP.get(position));
 
             }
         };
