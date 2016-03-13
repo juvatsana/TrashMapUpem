@@ -36,7 +36,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
     @Override
     public void onBindViewHolder(PbViewHolder holder, int position) {
         holder.type.setText(datas.get(position).type.toString());
-        holder.distance.setText(String.valueOf(datas.get(position).distance));
+
+        double distance = datas.get(position).distance;
+        double partieEntiere = Math.floor(distance);
+        double partieDecimale = Math.floor((distance - partieEntiere) * 1000);
+        String distanceFormated = Double.toString(partieEntiere) + "km "+ Double.toString(partieDecimale)+ " m";
+
+        holder.distance.setText(distanceFormated);
         holder.photoPb.setImageResource(datas.get(position).photoPb);
     }
 
