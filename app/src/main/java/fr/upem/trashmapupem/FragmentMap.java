@@ -51,7 +51,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return currentLocation;
     }
 
-    public void setCurrentLocation(Location location) { this.currentLocation = currentLocation;}
+    public void setTrackLocation(Location trackLocation) { this.trackLocation = trackLocation;}
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
     public enum FM_CONFIG {ADD,DELETE,MAP,TRACK}
@@ -68,6 +68,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
 
     private Location currentLocation;
     private Marker currentMarker;
+    private Location trackLocation;
 
     private boolean firstStart=true;
 
@@ -550,6 +551,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         if(!isOnListenerTrack())
         {
             loadApplicationMarkers(googleMap);
+        }
+        else
+        {
+            googleMap.addMarker(new MarkerOptions()
+                    .anchor(0.5f, 1.0f)
+                    .position(new LatLng(trackLocation.getLatitude(),trackLocation.getLongitude()))
+                    .title("Your here")
+                    .snippet("...")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
         }
 
 

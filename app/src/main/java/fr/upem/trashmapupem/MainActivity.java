@@ -249,6 +249,41 @@ public class MainActivity extends AppCompatActivity {
         Log.i("loadFragmentMap", "added");
     }
 
+
+
+    public boolean showFragmentMapTrack(FragmentMap fragment,FragmentMap.FM_CONFIG config,Location location)
+    {
+        if(fragment==null)return false;
+        fragment.loadConfig(config);
+        fragment.setTrackLocation(location);
+        showFragment(fragment);
+        return true;
+    }
+
+    /**
+     * Load Fragment Map Track
+     * @param config
+     * @param pm
+     */
+    public void loadFragmentMapTrack(FragmentMap.FM_CONFIG config,PoubelleMarker pm)
+    {
+        LatLng ll = pm.getMarkerOptions().getPosition();
+        Location location = new Location("");
+        location.setLatitude(ll.latitude);
+        location.setLongitude(ll.longitude);
+        hideFragment(TAG_LIST);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentMap testFragmentMap = (FragmentMap)fragmentManager.findFragmentByTag(TAG_MAP);
+        if(showFragmentMapTrack(testFragmentMap, config,location))return;
+        FragmentMap fragment = (FragmentMap)FragmentMap.newInstance(this);
+        fragment.setTrackLocation(location);
+        fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_MAP).commit();
+
+        // Assure that the transaction is made.
+        fragmentManager.executePendingTransactions();
+        Log.i("loadFragmentMap", "added");
+    }
+
     /**
      * Charge la FragmentListDistance.
      */
