@@ -26,8 +26,7 @@ import java.util.HashMap;
 import fr.upem.trashmapupem.R;
 
 /**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
+ * Task qui permet de supprimer une poubelle de la base de données
  */
 public class DeleteTrashTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -40,6 +39,11 @@ public class DeleteTrashTask extends AsyncTask<Void, Void, Boolean> {
         this.latitude = latitude;
     }
 
+    /**
+     * Supprime une poubelle en faisant appel au webService deleteTrash.php depuis notre serveur
+     * @param params
+     * @return
+     */
     @Override
     protected Boolean doInBackground(Void... params) {
 

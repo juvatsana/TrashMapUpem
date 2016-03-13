@@ -33,8 +33,7 @@ import fr.upem.trashmapupem.FragmentMap;
 import fr.upem.trashmapupem.R;
 
 /**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
+ * Task qui permet de récuperer toutes les poubelles de la base de données au format JSON
  */
 public class GetAllTrashTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -47,7 +46,11 @@ public class GetAllTrashTask extends AsyncTask<Void, Void, Boolean> {
         mapTrashColor = new HashMap<>();
     }
 
-
+    /**
+     * Convert la json recu en HashMap
+     * @param t json String
+     * @throws JSONException
+     */
     public void jsonToMap(String t) throws JSONException {
 
         JSONArray array = new JSONArray(t);
@@ -74,6 +77,11 @@ public class GetAllTrashTask extends AsyncTask<Void, Void, Boolean> {
 
     }
 
+    /**
+     * Recupere toutes les poubelles de la base de données en faisant appel au web service getAllTrash.php depuis notre serveur
+     * @param params
+     * @return
+     */
     @Override
     protected Boolean doInBackground(Void... params) {
 

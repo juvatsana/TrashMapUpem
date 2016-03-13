@@ -21,8 +21,7 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
+ * Task qui permet d'ajouter un poubelle dans la base de données
  */
 public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -40,9 +39,13 @@ public class InsertTrashTask extends AsyncTask<Void, Void, Boolean> {
         this.couleur = couleur;
     }
 
+    /**
+     * Ajoute une poubelle dans la base de données en faisant appel au webService insertTrash.php depuis notre serveur
+     * @param params
+     * @return
+     */
     @Override
     protected Boolean doInBackground(Void... params) {
-        // TODO: attempt authentication against a network service.
 
         try {
             // Simulate network access.
