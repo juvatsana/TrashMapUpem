@@ -54,13 +54,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     public void setCurrentLocation(Location location) { this.currentLocation = currentLocation;}
 
     public enum FM_TYPE { BROWN,YELLOW,GRAY,GREEN    }
-    public enum FM_CONFIG {ADD,DELETE,MAP}
+    public enum FM_CONFIG {ADD,DELETE,MAP,TRACK}
 
     private GoogleMap mMap;
     private static HashMap<String,PoubelleMarker> mapMark = new HashMap<String,PoubelleMarker>();
     private boolean onListenerAjout=false;
     private boolean onListenerDelete=false;
     private boolean onListenerMain=true;
+    private boolean onListenerTrack=false;
 
     private GoogleApiClient playServices;
     private LocationRequest theLocationRequest;
@@ -393,16 +394,25 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                 onListenerDelete = false;
                 onListenerAjout = true;
                 onListenerMain = false;
+                onListenerTrack = false;
                 break;
             case DELETE:
                 onListenerDelete = true;
                 onListenerAjout = false;
                 onListenerMain = false;
+                onListenerTrack = false;
                 break;
             case MAP:
                 onListenerDelete = false;
                 onListenerAjout = false;
                 onListenerMain = true;
+                onListenerTrack = false;
+                break;
+            case TRACK:
+                onListenerDelete = false;
+                onListenerAjout = false;
+                onListenerMain = false;
+                onListenerTrack = true;
                 break;
         }
     }
@@ -507,7 +517,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     @Override
     public void onDestroy()
     {
-        Log.i("onDestroy","Yes");
+        Log.i("onDestroy", "Yes");
         super.onDestroy();
     }
 
@@ -537,7 +547,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(currentMarker.getPosition().latitude, currentMarker.getPosition().longitude), 16));
 
-        loadApplicationMarkers(googleMap);
+        if(!isOnListenerTrack())
+        {
+            loadApplicationMarkers(googleMap);
+        }
+
 
         // START Start listeners or others customs things for map
         // Custom marker click
@@ -586,6 +600,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
      */
     public boolean isOnListenerMain() {
         return onListenerMain;
+    }
+
+    /**
+     * Check si le listener Track est true.
+     * @return Le boolean Track.
+     */
+    public boolean isOnListenerTrack() {
+        return onListenerTrack;
     }
 }
 

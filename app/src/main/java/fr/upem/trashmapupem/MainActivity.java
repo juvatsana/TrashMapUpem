@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment testFragmentList=fragmentManager.findFragmentByTag(tag);
         if(testFragmentList!=null)
         {
+            Log.i("test Fragment",testFragmentList.getId()+" : "+R.id.flContent);
             Log.i("test Fragment",tag+" : NOT NULL");
             fragmentManager.beginTransaction().hide(testFragmentList).commit();
 
