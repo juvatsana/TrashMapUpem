@@ -37,7 +37,8 @@ import fr.upem.trashmapupem.FragmentMap;
 import fr.upem.trashmapupem.R;
 
 /**
- * Listener for map long click in main fragments (use in all the fragments)
+ * Custom OnMapLongClickListener pour ajouter des poubelles sur la GoogleMap.
+ * Arrive seulement si le fragment Main est utilisé.
  */
 public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
 {
@@ -45,6 +46,12 @@ public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
     private Context activityContext;
     private GoogleMap themMap;
 
+    /**
+     * Créer une nouvelle instance de ListenerMainLongClick
+     * @param fragmentActivity Fragment de l'activité
+     * @param activityContext Context de l'application
+     * @param themMap La GoogleMap utilisée
+     */
     public ListenerMainLongClick(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
         this.fragmentActivity = fragmentActivity;
@@ -52,6 +59,10 @@ public class ListenerMainLongClick implements GoogleMap.OnMapLongClickListener
         this.themMap = themMap;
     }
 
+    /**
+     * Override la méthode onMapLongClick pour personnaliser l'évènement.
+     * @param arg0 Position lorsque le click est effectué.
+     */
     @Override
     public void onMapLongClick(LatLng arg0)
     {

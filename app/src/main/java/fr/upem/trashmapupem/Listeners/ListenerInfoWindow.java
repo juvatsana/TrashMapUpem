@@ -38,7 +38,7 @@ import fr.upem.trashmapupem.PoubelleMarker;
 import fr.upem.trashmapupem.R;
 
 /**
- * Listener info on window marker click
+ * Custom infoWindowAdapter qui permet de customiser l'info bulle lorsque l'on clique sur un marqueur.
  */
 public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
 
@@ -46,6 +46,12 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
     private Context activityContext;
     private GoogleMap themMap;
 
+    /**
+     * Créer une nouvelle instance de ListenerInfoWindow
+     * @param fragmentActivity Fragment de l'activité
+     * @param activityContext Context de l'application
+     * @param themMap La GoogleMap utilisée
+     */
     public ListenerInfoWindow(FragmentActivity fragmentActivity,Context activityContext,GoogleMap themMap)
     {
         this.fragmentActivity = fragmentActivity;
@@ -53,7 +59,11 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
         this.themMap = themMap;
     }
 
-    // Use default InfoWindow frame
+    /**
+     * Override la méthode getInfoWindow pour personnaliser l'évènement.
+     * @param arg0 Marker lorsque le click est effectué.
+     * @return La vue
+     */
     @Override
     public View getInfoWindow(Marker arg0) {
         View v = fragmentActivity.getLayoutInflater().inflate(R.layout.activity_infolayout, null);
@@ -109,7 +119,11 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
         return v;
     }
 
-    // Defines the contents of the InfoWindow
+    /**
+     * Override la méthode getInfoContents pour personnaliser l'évènement.
+     * @param arg0 Marker lorsque le click est effectué.
+     * @return null
+     */
     @Override
     public View getInfoContents(Marker arg0) {
 

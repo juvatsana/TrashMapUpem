@@ -41,6 +41,7 @@ import java.util.Map;
 import fr.upem.trashmapupem.Listeners.*;
 
 /**
+ * Fragment qui permet d'afficher la GoogleMap.
  * Created by Mourougan on 05/03/2016.
  */
 public class FragmentMap extends Fragment implements OnMapReadyCallback,ConnectionCallbacks,OnConnectionFailedListener,LocationListener {
@@ -70,7 +71,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     private boolean firstStart=true;
 
     /**
-     * Only use for convert a string to FM_TYPE
+     * Utiliser uniquement pour converter une couleur en enum FM_TYPE
      * @param type
      * @return FM_TYPE
      */
@@ -100,6 +101,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return thetype;
     }
 
+    /**
+     * Récupère l'instance PoubelleMarker de mapMark à partir de la clé de la map.
+     * @param key Clé de la map
+     * @return La valeur PoubelleMarker
+     */
     public static PoubelleMarker getPoubelleMarkerFromMap(String key)
     {
         if(mapMark.containsKey(key))
@@ -109,6 +115,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return null;
     }
 
+    /**
+     * Retourne une liste des PoubelleMarker de la map mapMark
+     * @return
+     */
     public static List<PoubelleMarker> getPosOfMapMark()
     {
         List<PoubelleMarker> list = new ArrayList<>();
@@ -121,13 +131,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     }
 
     /**
-     * Add a marker for future instance
-     * @param newMarker
-     * @return sucess or not
+     * Supprimer un marker de la map mapMark
+     * @param newMarker Marker à supprimer
      */
-    public static Marker removeFragmentMapMarker(Marker newMarker)
+    public static void removeFragmentMapMarker(Marker newMarker)
     {
-        if(newMarker==null)return null;
+        if(newMarker==null)return;
 
         LatLng LL = newMarker.getPosition();
         String newMarkKey=String.valueOf(LL.latitude)+":"+String.valueOf(LL.longitude);
@@ -135,11 +144,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         if(mapMark.containsKey(newMarkKey))
         {
             mapMark.remove(newMarkKey);
-            return newMarker;
         }
-        return null;
+        return;
     }
 
+    /**
+     * Ajoute une marker sur la GoogleMap.
+     * @param newMarker MarkerOptions à ajouter
+     * @param color Couleur à ajouter sous forme de FM_TYPE
+     * @return Nouvelle MarkerOptions
+     */
     public static MarkerOptions addFragmentMapMarker(MarkerOptions newMarker,FM_TYPE color)
     {
         if(newMarker == null)  return null;
@@ -187,11 +201,24 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return null;
     }
 
+    /**
+     * Créer une nouvelle instance du FragmentMap.
+     * @param context Context de l'application
+     * @return Instance du FragmentMap créé.
+     */
     public static Fragment newInstance(Context context) {
         FragmentMap f = new FragmentMap();
         return f;
     }
 
+    /**
+     * Override de la méthode.
+     * Initialise la GoogleApiClient.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         Log.i("Fragment map INFO", "PREPARATION DE ONCREATE");
@@ -205,6 +232,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return root;
     }
 
+    /**
+     * Override de la méthode onStart.
+     * Se connecte à la GoogleApiClient. Si il est déjà connecté car il s'est mis en pause, il charge la dernière localisation.
+     */
     @Override
     public void onStart()
     {
@@ -222,6 +253,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         playServices.connect();
     }
 
+    /**
+     * Override de la méthode onStop.
+     * Se déconnecté de la GoogleApiClient.
+     */
     @Override
     public void onStop()
     {
@@ -230,6 +265,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         super.onStop();
     }
 
+    /**
+     * Initialise la requête de localisation.
+     */
     public void initLocationRequest()
     {
         theLocationRequest = LocationRequest.create();
@@ -237,6 +275,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         theLocationRequest.setInterval(1000); // Update location every second
     }
 
+    /**
+     * Initialise la position courrante.
+     */
     public void initCurrentlocation()
     {
         currentLocation = new Location("");
@@ -244,6 +285,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         getCurrentLocation().setLongitude(2.5850778d);
     }
 
+    /**
+     * Renvoie true si la distance entre les deux localisation est supèrieur à la distance minimum renseignée.
+     * @param location Première localisation.
+     * @param location2 Deuxième localisation.
+     * @param distanceMin Distance minimum.
+     * @return
+     */
     public boolean comparatorDistanceWithMinimum(Location location,Location location2,Double distanceMin)
     {
         LatLng latLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -256,6 +304,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         return false;
     }
 
+    /**
+     * Charge la dernière localisation trouvée sinon prend celle par défault.
+     */
     public void loadLastLocation()
     {
         Location mobileLocation = null;
@@ -293,6 +344,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Charge le marker current.
+     * @param googleMap
+     */
     public void loadCurrentMarker(GoogleMap googleMap)
     {
         if(currentMarker!=null)
@@ -307,6 +362,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
                     .snippet("...")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
     }
+
+    /**
+     * Charge les marker de la map dans la GoogleMap.
+     * @param googleMap
+     */
     public void loadApplicationMarkers(GoogleMap googleMap)
     {
         Iterator it = mapMark.entrySet().iterator();
@@ -317,6 +377,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Charge une config.
+     * @param config La config voulue.
+     */
     public void loadConfig(FM_CONFIG config)
     {
         if(config==null)
@@ -343,6 +407,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
     }
 
+    /**
+     * Initialise les listeners.
+     * @param googleMap
+     */
     public void initListeners(GoogleMap googleMap)
     {
         googleMap.setOnMapLongClickListener(null);
@@ -350,6 +418,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         googleMap.setOnMapClickListener(null);
     }
 
+    /**
+     * Override de la méthode onConnected.
+     * Charge la dernière localisation.
+     * @param connectionHint
+     */
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Google API", "OK");
@@ -360,16 +433,29 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         myMAPF.getMapAsync(this); // Call onMapReady
     }
 
+    /**
+     * Override de la méthode onConnectionSuspended.
+     * @param i
+     */
      @Override
     public void onConnectionSuspended(int i) {
         Log.d("Connection suspended", "Connection suspended");
     }
 
+    /**
+     * Override de la méthode onConnectionFailed
+     * @param connectionResult
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d("Connection failed", "Connection failed");
     }
 
+    /**
+     * Override de la méthode onLocationChanged. Dépend de la LocationRequest.
+     * Permis de charger la dernière localisation.
+     * @param location La nouvelle localisation.
+     */
     @Override
     public void onLocationChanged(Location location) {
         if(currentLocation==null)return;
@@ -384,6 +470,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         Log.i("Location received: ", location.toString());
     }
 
+    /**
+     * Affiche une alerte si votre gps est désactivé.
+     */
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
@@ -411,6 +500,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         // Showing Alert Message
         alertDialog.show();
     }
+
+    /**
+     * Override de la méthode onDestroy.
+     */
     @Override
     public void onDestroy()
     {
@@ -418,6 +511,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         super.onDestroy();
     }
 
+    /**
+     * Appel de la méthode onMapReady appelé avec la méthode getMapAsync.
+     * @param googleMap La GoogleMap actuelle.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
 

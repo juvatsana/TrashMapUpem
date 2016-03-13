@@ -69,6 +69,14 @@ public class LoginActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        if(savedInstanceState==null)
+        {
+            Log.e("Login OnCreate","null");
+        }
+        else
+        {
+            Log.e("Login OnCreate","Good");
+        }
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -202,6 +210,7 @@ public class LoginActivity extends AppCompatActivity{
         private final String mEmail;
         private final String mPassword;
         private ProgressDialog prodDialog;
+
 
         UserLoginTask(String email, String password) {
             mEmail = email;
