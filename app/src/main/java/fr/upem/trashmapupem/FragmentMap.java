@@ -633,7 +633,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         String waypoints = "origin="
                 + curlat + "," + curlng
                 + "&destination=" + poublat + ","
-                + poublng;
+                + poublng +"&mode=walking";
         String sensor = "sensor=false";
         String params = waypoints + "&" + sensor;
 
