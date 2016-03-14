@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -30,7 +31,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 import fr.upem.trashmapupem.Listeners.*;
+import fr.upem.trashmapupem.Task.HttpConnection;
+import fr.upem.trashmapupem.Task.PathJSONParser;
 
 /**
  * Fragment qui permet d'afficher la GoogleMap.
@@ -554,12 +560,39 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
         }
         else
         {
-            googleMap.addMarker(new MarkerOptions()
+
+//            googleMap.addMarker(new MarkerOptions()
+//                    .anchor(0.5f, 1.0f)
+//                    .position(new LatLng(trackLocation.getLatitude(), trackLocation.getLongitude()))
+//                    .title("Your here")
+//                    .snippet("...")
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
+
+            MarkerOptions markerOption = new MarkerOptions()
                     .anchor(0.5f, 1.0f)
-                    .position(new LatLng(trackLocation.getLatitude(),trackLocation.getLongitude()))
+                    .position(new LatLng(trackLocation.getLatitude(), trackLocation.getLongitude()))
                     .title("Your here")
                     .snippet("...")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman));
+
+            LatLng platlng = markerOption.getPosition();
+
+            MarkerOptions options = new MarkerOptions();
+            options.position(platlng);
+            options.position(currentMarker.getPosition());
+
+            googleMap.addMarker(new MarkerOptions()
+                    .anchor(0.5f, 1.0f)
+                    .position(new LatLng(trackLocation.getLatitude(), trackLocation.getLongitude()))
+                    .title("Your trash selected !!!")
+                    .snippet("...")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.markposman)));
+
+            googleMap.addMarker(markerOption);
+            String url = getMapsApiDirectionsUrl(currentLocation.getLatitude(),currentLocation.getLongitude(),platlng.latitude,platlng.longitude);
+
+            ReadPathTask pathTask = new ReadPathTask();
+            pathTask.execute(url);
         }
 
 
@@ -587,6 +620,124 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
             googleMap.setOnMapClickListener(new ListenerAddClick(getActivity(),getContext(),googleMap));
         }
     }
+
+    /***
+     *  Private method creating the maps api directions url with the origin and destination
+     * @param curlat current position latitude
+     * @param curlng current position longitude
+     * @param poublat the destination trash latitude
+     * @param poublng the destination trash longitude
+     * @return a string -- google maps api url
+     */
+    private String getMapsApiDirectionsUrl(double curlat,double curlng,double poublat,double poublng ) {
+        String waypoints = "origin="
+                + curlat + "," + curlng
+                + "&destination=" + poublat + ","
+                + poublng;
+        String sensor = "sensor=false";
+        String params = waypoints + "&" + sensor;
+
+        String url = "https://maps.googleapis.com/maps/api/directions/json?"+params;
+        Log.i("URL MOFOFOFOFO",url);
+        return url;
+    }
+
+    /***
+     *  private AsynTask that connect to google api direction service and create path, we don't bother the main task
+     *  because it may take some time
+     */
+    private class ReadPathTask extends AsyncTask<String, Void, String> {
+
+        /***
+         *  Send url with HttpConnection class and retrieve the answer
+         * @param url the google maps direction url
+         * @return
+         */
+        @Override
+        protected String doInBackground(String... url) {
+            String data = "";
+            try {
+                HttpConnection http = new HttpConnection();
+                data = http.readUrl(url[0]);
+                Log.i("INFO Data",data);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        /***
+         * After we get the json responve from google api we lauche an other asynctask that parse the json
+         * and add the path created to mMap
+         * @param result
+         */
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            new ParserPathTask().execute(result);
+        }
+    }
+
+    private class ParserPathTask extends
+            AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+        /***
+         * Parse json answer from maps direction api and create a List<List<HashMap<String, String>>> to represent the
+         * path we will take
+         * @param jsonData
+         * @return
+         */
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(
+                String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+                PathJSONParser parser = new PathJSONParser();
+                routes = parser.parse(jObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return routes;
+        }
+
+        /***
+         * Draw the path on google map with route create beforehand
+         * @param routes
+         */
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> routes) {
+            ArrayList<LatLng> points = null;
+            PolylineOptions polyLineOptions = null;
+
+
+            for (int i = 0; i < routes.size(); i++) {
+                points = new ArrayList<LatLng>();
+                polyLineOptions = new PolylineOptions();
+                List<HashMap<String, String>> path = routes.get(i);
+
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                polyLineOptions.addAll(points);
+                polyLineOptions.width(20);
+                polyLineOptions.color(R.color.colorPrimary);
+            }
+
+            mMap.addPolyline(polyLineOptions);
+        }
+    }
+
 
     /**
      * Check si le listener Ajout est true.
@@ -619,5 +770,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback,Connecti
     public boolean isOnListenerTrack() {
         return onListenerTrack;
     }
+
 }
 
