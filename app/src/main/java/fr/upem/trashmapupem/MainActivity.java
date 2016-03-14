@@ -251,21 +251,20 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public boolean showFragmentMapTrack(FragmentMap fragment,FragmentMap.FM_CONFIG config,Location location)
+    public boolean showFragmentMapTrack(FragmentMap fragment,Location location)
     {
         if(fragment==null)return false;
-        fragment.loadConfig(config);
+        fragment.loadConfig(FragmentMap.FM_CONFIG.TRACK);
         fragment.setTrackLocation(location);
         showFragment(fragment);
         return true;
     }
 
     /**
-     * Load Fragment Map Track
-     * @param config
-     * @param pm
+     * Charge un fragment map avec le mode Track.
+     * @param pm La PoubelleMarker à afficher.
      */
-    public void loadFragmentMapTrack(FragmentMap.FM_CONFIG config,PoubelleMarker pm)
+    public void loadFragmentMapTrack(PoubelleMarker pm)
     {
         LatLng ll = pm.getMarkerOptions().getPosition();
         Location location = new Location("");
@@ -274,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         hideFragment(TAG_LIST);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentMap testFragmentMap = (FragmentMap)fragmentManager.findFragmentByTag(TAG_MAP);
-        if(showFragmentMapTrack(testFragmentMap, config,location))return;
+        if(showFragmentMapTrack(testFragmentMap,location))return;
         FragmentMap fragment = (FragmentMap)FragmentMap.newInstance(this);
         fragment.setTrackLocation(location);
         fragmentManager.beginTransaction().add(R.id.flContent, fragment,TAG_MAP).commit();

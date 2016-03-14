@@ -34,7 +34,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/infoTest"
-            android:text="Blabla 0.14 km plus loin"
+            android:text="..."
             android:layout_width="wrap_content"
             android:textColor="@android:color/black"
             android:layout_height="wrap_content" />

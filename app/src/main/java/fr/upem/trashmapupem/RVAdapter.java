@@ -41,7 +41,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PbViewHolder>{
             @Override
             public void onclickdist(View caller, CharSequence text, int position) {
                 MainActivity main = (MainActivity)context;
-                main.loadFragmentMapTrack(FragmentMap.FM_CONFIG.TRACK,listP.get(position));
+                main.loadFragmentMapTrack(listP.get(position));
 
             }
         };
