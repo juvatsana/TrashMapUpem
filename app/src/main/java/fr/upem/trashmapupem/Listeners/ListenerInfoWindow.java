@@ -2,6 +2,7 @@ package fr.upem.trashmapupem.Listeners;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -33,7 +34,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import fr.upem.trashmapupem.FragmentListDistance;
 import fr.upem.trashmapupem.FragmentMap;
+import fr.upem.trashmapupem.MainActivity;
 import fr.upem.trashmapupem.PoubelleMarker;
 import fr.upem.trashmapupem.R;
 
@@ -69,6 +72,7 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
         View v = fragmentActivity.getLayoutInflater().inflate(R.layout.activity_infolayout, null);
         TextView tvinfoTitle = (TextView) v.findViewById(R.id.infoTitle);
         TextView tvinfoSnippet = (TextView) v.findViewById(R.id.infoSnippet);
+        TextView tvinfoTest = (TextView) v.findViewById(R.id.infoTest);
         ImageView ivinfoimage1 = (ImageView) v.findViewById(R.id.imgInfoImage1);
         ImageView ivinfoimage2 = (ImageView) v.findViewById(R.id.imgInfoImage2);
 
@@ -116,6 +120,12 @@ public class ListenerInfoWindow implements GoogleMap.InfoWindowAdapter{
 
         tvinfoTitle.setText(arg0.getTitle());
         tvinfoSnippet.setText(arg0.getSnippet());
+        MainActivity theActivityfragmentActivity = (MainActivity)fragmentActivity;
+        Location theLocation = theActivityfragmentActivity.loadLastLocationFromFragmentMap();
+        double distance = FragmentListDistance.CalculationByDistance(
+                new LatLng(theLocation.getLatitude(),theLocation.getLongitude()),
+                arg0.getPosition());
+        tvinfoTest.setText(String.valueOf(Math.floor(distance))+" km plus loin.");
         return v;
     }
 
